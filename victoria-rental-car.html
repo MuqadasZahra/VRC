@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Victoria Rental Car — Premium Car Rental in Dubai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E1210;
+    --ink-2:#171C19;
+    --ink-3:#20261F;
+    --sand:#F3EEE3;
+    --sand-2:#EAE1CC;
+    --gold:#B8935B;
+    --gold-light:#D9BD8C;
+    --gold-deep:#8E6E3E;
+    --white:#FFFFFF;
+    --text-dark:#15180F;
+    --text-muted:#6E6A5C;
+    --line:rgba(184,147,91,0.28);
+    --radius:2px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--sand);
+    color:var(--text-dark);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4,.display{font-family:'Fraunces',serif;letter-spacing:-0.01em;}
+  a{text-decoration:none;color:inherit;}
+  img{display:block;max-width:100%;}
+  .container{max-width:1240px;margin:0 auto;padding:0 32px;}
+  .eyebrow{
+    font-size:12px;letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--gold-deep);font-weight:700;display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold-deep);display:inline-block;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:15px 30px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;
+    font-weight:700;border-radius:var(--radius);cursor:pointer;border:1px solid transparent;
+    transition:all .25s ease;white-space:nowrap;
+  }
+  .btn-gold{background:var(--gold);color:var(--ink);}
+  .btn-gold:hover{background:var(--gold-light);transform:translateY(-1px);}
+  .btn-outline{border-color:rgba(255,255,255,0.35);color:#fff;}
+  .btn-outline:hover{border-color:#fff;background:rgba(255,255,255,0.08);}
+  .btn-dark{background:var(--ink);color:var(--sand);}
+  .btn-dark:hover{background:var(--ink-3);}
+  .btn-block{width:100%;}
+
+  /* ===== HEADER ===== */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    padding:22px 0;transition:all .35s ease;
+  }
+  header.scrolled{background:rgba(14,18,16,0.92);backdrop-filter:blur(10px);padding:14px 0;box-shadow:0 6px 30px rgba(0,0,0,0.25);}
+  .nav-wrap{display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:#fff;letter-spacing:0.02em;}
+  .logo span{color:var(--gold);}
+  nav ul{list-style:none;display:flex;gap:38px;}
+  nav a{color:rgba(255,255,255,0.82);font-size:13px;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;transition:color .2s;}
+  nav a:hover{color:var(--gold-light);}
+  .nav-right{display:flex;align-items:center;gap:18px;}
+  .nav-wa{display:flex;align-items:center;gap:8px;color:#fff;font-size:13px;font-weight:600;}
+  .nav-wa svg{width:18px;height:18px;fill:#3FCF62;}
+  .burger{display:none;}
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    background:linear-gradient(180deg,rgba(10,13,11,0.55) 0%,rgba(10,13,11,0.55) 55%,rgba(14,18,16,1) 100%),
+    url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1800&auto=format&fit=crop') center/cover no-repeat;
+    padding-top:120px;
+  }
+  .hero-content{position:relative;z-index:2;}
+  .hero .eyebrow{color:var(--gold-light);}
+  .hero .eyebrow::before{background:var(--gold-light);}
+  .hero h1{
+    font-size:clamp(42px,7vw,86px);color:#fff;line-height:0.98;font-weight:600;margin:22px 0 26px;max-width:900px;
+  }
+  .hero h1 em{font-style:italic;color:var(--gold-light);font-weight:500;}
+  .hero p.lead{color:rgba(255,255,255,0.78);font-size:18px;max-width:520px;line-height:1.6;margin-bottom:38px;}
+  .hero-ctas{display:flex;gap:16px;margin-bottom:70px;flex-wrap:wrap;}
+
+  .quick-book{
+    background:rgba(20,24,20,0.72);backdrop-filter:blur(14px);
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;display:grid;grid-template-columns:repeat(4,1fr) auto;gap:0;
+    position:relative;z-index:2;
+  }
+  .qb-field{padding:6px 24px;border-right:1px solid rgba(255,255,255,0.12);}
+  .qb-field:first-child{padding-left:4px;}
+  .qb-field label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold-light);margin-bottom:8px;font-weight:700;}
+  .qb-field select,.qb-field input{
+    background:transparent;border:none;color:#fff;font-family:'Inter',sans-serif;font-size:14px;width:100%;font-weight:500;
+  }
+  .qb-field select option{color:#111;}
+  .qb-field input::placeholder{color:rgba(255,255,255,0.5);}
+  .qb-submit{display:flex;align-items:center;padding-left:20px;}
+
+  .skyline-strip{
+    position:absolute;bottom:0;left:0;right:0;height:110px;z-index:1;opacity:0.9;pointer-events:none;
+  }
+
+  /* ===== STAT BAR ===== */
+  .statbar{background:var(--ink);padding:0;}
+  .statbar-inner{display:grid;grid-template-columns:repeat(4,1fr);}
+  .stat{padding:38px 20px;text-align:center;border-right:1px solid rgba(255,255,255,0.08);}
+  .stat:last-child{border-right:none;}
+  .stat .num{font-family:'Fraunces',serif;font-size:38px;color:var(--gold-light);font-weight:600;}
+  .stat .lbl{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-top:6px;font-weight:600;}
+
+  /* ===== SECTION GENERIC ===== */
+  section{padding:110px 0;}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;gap:30px;flex-wrap:wrap;}
+  .sec-head h2{font-size:clamp(30px,4vw,48px);font-weight:600;margin-top:14px;max-width:600px;}
+  .sec-head p{color:var(--text-muted);max-width:380px;line-height:1.6;font-size:15px;}
+
+  /* ===== CATEGORIES ===== */
+  .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  .cat-card{
+    position:relative;aspect-ratio:3/4;border-radius:var(--radius);overflow:hidden;cursor:pointer;
+    background-size:cover;background-position:center;
+  }
+  .cat-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.05) 30%,rgba(8,10,8,0.88) 100%);}
+  .cat-card .cat-label{position:absolute;left:22px;bottom:22px;z-index:2;color:#fff;}
+  .cat-card .cat-label h3{font-size:22px;font-weight:600;}
+  .cat-card .cat-label span{font-size:12px;color:var(--gold-light);letter-spacing:0.06em;text-transform:uppercase;font-weight:700;}
+  .cat-arrow{position:absolute;top:18px;right:18px;z-index:2;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;color:#fff;transition:.25s;}
+  .cat-card:hover .cat-arrow{background:var(--gold);border-color:var(--gold);color:var(--ink);transform:rotate(45deg);}
+
+  /* ===== FLEET ===== */
+  .fleet{background:var(--white);}
+  .fleet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;}
+  .car-card{
+    background:var(--sand);border:1px solid var(--sand-2);border-radius:var(--radius);overflow:hidden;
+    transition:transform .3s ease,box-shadow .3s ease;cursor:pointer;
+  }
+  .car-card:hover{transform:translateY(-6px);box-shadow:0 24px 50px -20px rgba(20,20,15,0.25);}
+  .car-img{height:220px;background-size:cover;background-position:center;position:relative;}
+  .car-tag{position:absolute;top:14px;left:14px;background:var(--ink);color:var(--gold-light);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:6px 12px;font-weight:700;border-radius:2px;}
+  .car-body{padding:22px 24px 26px;}
+  .car-body .cname{font-size:20px;font-weight:600;margin-bottom:4px;}
+  .car-specs{display:flex;gap:14px;color:var(--text-muted);font-size:12px;margin:10px 0 18px;flex-wrap:wrap;}
+  .car-specs span{display:flex;align-items:center;gap:5px;}
+  .car-foot{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--sand-2);}
+  .car-price{font-family:'Fraunces',serif;font-size:20px;font-weight:600;}
+  .car-price small{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);font-weight:500;text-transform:uppercase;}
+  .car-cta{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold-deep);display:flex;align-items:center;gap:6px;}
+
+  .fleet-more{text-align:center;margin-top:50px;}
+
+  /* ===== WHY US ===== */
+  .why{background:var(--ink);color:#fff;}
+  .why .sec-head p, .why .eyebrow{color:rgba(255,255,255,0.6);}
+  .why .sec-head h2{color:#fff;}
+  .why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08);}
+  .why-item{background:var(--ink);padding:40px 28px;}
+  .why-item .wi-num{font-family:'Fraunces',serif;font-size:14px;color:var(--gold);margin-bottom:22px;}
+  .why-item h4{font-size:18px;font-weight:600;margin-bottom:10px;}
+  .why-item p{font-size:13.5px;color:rgba(255,255,255,0.55);line-height:1.6;}
+
+  /* ===== PROMO BAND ===== */
+  .promo{
+    background:linear-gradient(120deg,rgba(14,18,16,0.55),rgba(14,18,16,0.85)),url('https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1800&auto=format&fit=crop') center/cover;
+    padding:90px 0;color:#fff;
+  }
+  .promo-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:30px;}
+  .promo h2{font-size:clamp(28px,4vw,44px);max-width:520px;font-weight:600;}
+  .promo p{color:rgba(255,255,255,0.7);margin-top:12px;max-width:460px;}
+
+  /* ===== REVIEWS ===== */
+  .reviews{background:var(--sand-2);}
+  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .rev-card{background:var(--white);padding:32px;border-radius:var(--radius);border:1px solid rgba(0,0,0,0.05);}
+  .stars{color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:16px;}
+  .rev-card p.quote{font-size:15px;line-height:1.7;color:var(--text-dark);margin-bottom:22px;}
+  .rev-person{display:flex;align-items:center;gap:12px;}
+  .rev-avatar{width:42px;height:42px;border-radius:50%;background:var(--gold);color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Fraunces',serif;}
+  .rev-person .rname{font-weight:700;font-size:14px;}
+  .rev-person .rcar{font-size:12px;color:var(--text-muted);}
+
+  /* ===== BOOKING ===== */
+  .booking{background:var(--ink);color:#fff;position:relative;overflow:hidden;}
+  .booking-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:70px;align-items:flex-start;}
+  .booking-left .eyebrow, .booking-left p{color:rgba(255,255,255,0.6);}
+  .booking-left h2{color:#fff;font-size:clamp(30px,4vw,46px);margin:16px 0 20px;font-weight:600;}
+  .booking-perks{margin-top:36px;display:flex;flex-direction:column;gap:20px;}
+  .booking-perk{display:flex;gap:14px;align-items:flex-start;}
+  .booking-perk .ico{width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);flex-shrink:0;}
+  .booking-perk div h5{font-size:14.5px;font-weight:600;margin-bottom:3px;}
+  .booking-perk div p{font-size:13px;color:rgba(255,255,255,0.5);}
+
+  .form-card{background:var(--ink-2);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:40px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+  .field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-light);margin-bottom:8px;font-weight:700;}
+  .field input,.field select,.field textarea{
+    width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.14);border-radius:2px;
+    padding:13px 14px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;transition:border .2s;
+  }
+  .field select option{color:#111;}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold);}
+  .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.35);}
+  .field textarea{resize:vertical;min-height:90px;}
+  .form-note{font-size:11.5px;color:rgba(255,255,255,0.4);margin-top:14px;line-height:1.6;}
+
+  .success-box{display:none;text-align:center;padding:30px 10px;}
+  .success-box.show{display:block;}
+  .success-icon{width:64px;height:64px;border-radius:50%;background:rgba(63,207,98,0.15);border:1px solid #3FCF62;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;}
+  .success-icon svg{width:28px;height:28px;stroke:#3FCF62;}
+  .success-box h3{font-size:22px;color:#fff;margin-bottom:10px;font-weight:600;}
+  .success-box p{color:rgba(255,255,255,0.6);font-size:14px;line-height:1.6;max-width:340px;margin:0 auto 22px;}
+
+  /* ===== MAP / LOCATION ===== */
+  .location{background:var(--white);}
+  .loc-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:0;border:1px solid var(--sand-2);border-radius:var(--radius);overflow:hidden;}
+  .loc-info{background:var(--sand);padding:52px;}
+  .loc-info h2{font-size:30px;font-weight:600;margin:14px 0 18px;}
+  .loc-info p{color:var(--text-muted);line-height:1.7;margin-bottom:30px;font-size:14.5px;}
+  .loc-row{display:flex;gap:16px;margin-bottom:22px;align-items:flex-start;}
+  .loc-row .ico{width:40px;height:40px;background:var(--ink);color:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .loc-row h5{font-size:14px;font-weight:700;margin-bottom:3px;}
+  .loc-row p{margin:0;font-size:13.5px;}
+  .map-embed{min-height:460px;}
+  .map-embed iframe{width:100%;height:100%;min-height:460px;border:0;filter:grayscale(15%) contrast(1.05);}
+
+  /* ===== FOOTER ===== */
+  footer{background:var(--ink);color:rgba(255,255,255,0.75);padding-top:90px;}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px;padding-bottom:60px;border-bottom:1px solid rgba(255,255,255,0.08);}
+  .foot-logo{font-family:'Fraunces',serif;font-size:26px;color:#fff;font-weight:700;margin-bottom:16px;}
+  .foot-logo span{color:var(--gold);}
+  .foot-about p{font-size:13.5px;line-height:1.7;color:rgba(255,255,255,0.5);max-width:280px;margin-bottom:22px;}
+  .foot-social{display:flex;gap:10px;}
+  .foot-social a{width:36px;height:36px;border:1px solid rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.2s;}
+  .foot-social a:hover{border-color:var(--gold);color:var(--gold);}
+  .foot-col h5{font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:#fff;margin-bottom:20px;font-weight:700;}
+  .foot-col ul{list-style:none;}
+  .foot-col li{margin-bottom:12px;}
+  .foot-col a{font-size:13.5px;color:rgba(255,255,255,0.55);transition:.2s;}
+  .foot-col a:hover{color:var(--gold-light);}
+  .foot-news input{width:100%;padding:13px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:2px;color:#fff;margin-bottom:10px;font-size:13.5px;}
+  .foot-bottom{display:flex;justify-content:space-between;padding:26px 0;font-size:12.5px;color:rgba(255,255,255,0.4);flex-wrap:wrap;gap:10px;}
+  .foot-bottom a{color:rgba(255,255,255,0.4);}
+  .foot-bottom a:hover{color:var(--gold-light);}
+
+  /* ===== WHATSAPP FLOAT ===== */
+  .wa-float{
+    position:fixed;bottom:28px;right:28px;z-index:200;width:60px;height:60px;border-radius:50%;
+    background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    transition:transform .2s;
+  }
+  .wa-float:hover{transform:scale(1.08);}
+  .wa-float svg{width:30px;height:30px;fill:#fff;}
+  .wa-pulse{position:absolute;inset:0;border-radius:50%;background:#25D366;animation:pulse 2s infinite;}
+  @keyframes pulse{0%{transform:scale(1);opacity:0.6;}100%{transform:scale(1.7);opacity:0;}}
+
+  /* ===== MODAL ===== */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(8,10,8,0.82);backdrop-filter:blur(6px);z-index:300;
+    display:none;align-items:center;justify-content:center;padding:30px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--sand);max-width:920px;width:100%;max-height:88vh;overflow-y:auto;border-radius:var(--radius);
+    position:relative;
+  }
+  .modal-close{position:absolute;top:18px;right:18px;width:38px;height:38px;background:rgba(0,0,0,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;z-index:5;}
+  .modal-hero{height:340px;background-size:cover;background-position:center;}
+  .modal-content{padding:40px 44px 44px;}
+  .modal-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:14px;}
+  .modal-top h3{font-size:30px;font-weight:600;}
+  .modal-price{text-align:right;}
+  .modal-price .amt{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--gold-deep);}
+  .modal-desc{color:var(--text-muted);line-height:1.7;font-size:14.5px;margin:16px 0 26px;max-width:640px;}
+  .modal-specs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:34px;}
+  .modal-spec{background:var(--white);border:1px solid var(--sand-2);padding:16px;border-radius:2px;text-align:center;}
+  .modal-spec .v{font-weight:700;font-size:15px;}
+  .modal-spec .l{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-top:3px;}
+  .modal-rev-title{font-size:13px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;color:var(--gold-deep);margin-bottom:18px;}
+  .modal-reviews{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:32px;}
+  .modal-rev-card{background:var(--white);border:1px solid var(--sand-2);padding:18px 20px;border-radius:2px;}
+  .modal-rev-card .stars{margin-bottom:8px;font-size:12px;}
+  .modal-rev-card p{font-size:13.5px;line-height:1.6;color:var(--text-dark);margin-bottom:10px;}
+  .modal-rev-card .who{font-size:12px;color:var(--text-muted);font-weight:600;}
+
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:1000px){
+    nav, .nav-wa{display:none;}
+    .burger{display:block;color:#fff;font-size:26px;cursor:pointer;}
+    .quick-book{grid-template-columns:1fr 1fr;gap:18px;}
+    .qb-field{border-right:none;border-bottom:1px solid rgba(255,255,255,0.12);padding:10px 4px;}
+    .qb-submit{grid-column:span 2;padding-left:4px;padding-top:14px;}
+    .statbar-inner{grid-template-columns:repeat(2,1fr);}
+    .stat:nth-child(2){border-right:none;}
+    .cat-grid,.fleet-grid,.why-grid,.rev-grid{grid-template-columns:repeat(2,1fr);}
+    .booking-grid{grid-template-columns:1fr;}
+    .loc-grid{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:1fr 1fr;}
+    .modal-specs,.modal-reviews{grid-template-columns:repeat(2,1fr);}
+  }
+  @media(max-width:600px){
+    .container{padding:0 20px;}
+    .cat-grid,.fleet-grid,.why-grid,.rev-grid,.foot-grid,.form-row,.modal-specs,.modal-reviews{grid-template-columns:1fr;}
+    .quick-book{grid-template-columns:1fr;}
+    .qb-submit{grid-column:span 1;}
+    section{padding:70px 0;}
+    .form-card{padding:26px;}
+    .modal-content{padding:26px;}
+  }
+</style>
+<!-- Firebase (shared live database with the admin panel) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="siteHeader">
+  <div class="container nav-wrap">
+    <a href="#home" class="logo">VICTORIA<span>.</span></a>
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#fleet">Fleet</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#location">Location</a></li>
+        <li><a href="#book">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="nav-right">
+      <a class="nav-wa" href="https://wa.me/971501234567" target="_blank" rel="noopener">
+        <svg viewBox="0 0 32 32"><path d="M16.02 3C9.4 3 4 8.4 4 15.02c0 2.36.68 4.55 1.86 6.42L4 29l7.76-1.83a11.9 11.9 0 0 0 4.26.78h.01c6.62 0 12.02-5.4 12.02-12.02C28.05 8.4 22.65 3 16.02 3zm0 21.9h-.01a9.9 9.9 0 0 1-5.05-1.39l-.36-.21-3.75.89.9-3.66-.24-.38a9.85 9.85 0 0 1-1.51-5.23c0-5.46 4.44-9.9 9.92-9.9 2.65 0 5.14 1.03 7.01 2.9a9.83 9.83 0 0 1 2.9 7.01c0 5.47-4.44 9.97-9.9 9.97z"/></svg>
+        +971 50 123 4567
+      </a>
+      <a href="#book" class="btn btn-gold">Book Now</a>
+      <div class="burger" onclick="document.getElementById('mobileNav').classList.toggle('open')">☰</div>
+    </div>
+  </div>
+  <div id="mobileNav" style="display:none;flex-direction:column;background:var(--ink);padding:20px 32px;gap:16px;"></div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home" style="padding-bottom:0;">
+  <div class="container hero-content">
+    <p class="eyebrow">Victoria Rental Car — Dubai, U.A.E.</p>
+    <h1>Drive the city<br>like it's <em>yours.</em></h1>
+    <p class="lead">Self-drive and chauffeured luxury vehicles across Downtown Dubai, Marina and DXB Airport — delivered to your door in under 60 minutes, any hour of the day.</p>
+    <div class="hero-ctas">
+      <a href="#fleet" class="btn btn-gold">Explore the Fleet</a>
+      <a href="#book" class="btn btn-outline">Reserve a Car</a>
+    </div>
+
+    <form class="quick-book" id="quickBookForm">
+      <div class="qb-field">
+        <label>Pick-up Location</label>
+        <select>
+          <option>DXB Airport Terminal 3</option>
+          <option>Downtown Dubai</option>
+          <option>Dubai Marina</option>
+          <option>Palm Jumeirah</option>
+          <option>Business Bay</option>
+        </select>
+      </div>
+      <div class="qb-field">
+        <label>Pick-up Date</label>
+        <input type="date">
+      </div>
+      <div class="qb-field">
+        <label>Drop-off Date</label>
+        <input type="date">
+      </div>
+      <div class="qb-field">
+        <label>Car Type</label>
+        <select>
+          <option>Luxury Sedan</option>
+          <option>SUV / 4x4</option>
+          <option>Sports & Supercar</option>
+          <option>Chauffeur Service</option>
+        </select>
+      </div>
+      <div class="qb-submit">
+        <button type="submit" class="btn btn-gold">Search</button>
+      </div>
+    </form>
+  </div>
+
+  <svg class="skyline-strip" viewBox="0 0 1440 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#0E1210" d="M0,110 L0,70 L40,70 L40,50 L60,50 L60,70 L90,70 L90,30 L100,30 L100,20 L110,20 L110,30 L120,30 L120,70 L160,70 L160,40 L175,40 L175,70 L230,70 L230,10 L245,10 L245,0 L255,0 L255,10 L270,10 L270,70 L330,70 L330,55 L350,55 L350,70 L400,70 L400,45 L420,45 L420,70 L480,70 L480,25 L495,25 L495,15 L505,15 L505,25 L520,25 L520,70 L580,70 L580,60 L600,60 L600,70 L660,70 L660,35 L680,35 L680,70 L740,70 L740,5 L755,5 L755,0 L765,0 L765,5 L780,5 L780,70 L840,70 L840,50 L860,50 L860,70 L920,70 L920,40 L940,40 L940,70 L1000,70 L1000,20 L1015,20 L1015,10 L1025,10 L1025,20 L1040,20 L1040,70 L1100,70 L1100,55 L1120,55 L1120,70 L1180,70 L1180,45 L1200,45 L1200,70 L1260,70 L1260,30 L1275,30 L1275,15 L1285,15 L1285,30 L1300,30 L1300,70 L1360,70 L1360,50 L1380,50 L1380,70 L1440,70 L1440,110 Z"/>
+  </svg>
+</section>
+
+<!-- STAT BAR -->
+<div class="statbar">
+  <div class="container">
+    <div class="statbar-inner">
+      <div class="stat"><div class="num">12+</div><div class="lbl">Years in Dubai</div></div>
+      <div class="stat"><div class="num">460+</div><div class="lbl">Vehicles in Fleet</div></div>
+      <div class="stat"><div class="num">4.9 / 5</div><div class="lbl">Client Rating</div></div>
+      <div class="stat"><div class="num">24 / 7</div><div class="lbl">Concierge Support</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section id="categories">
+  <div class="container">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Choose your class</p>
+        <h2>A car for every kind of Dubai day.</h2>
+      </div>
+      <p>From boardroom meetings on Sheikh Zayed Road to sunset drives along the Palm — pick the category that fits the moment.</p>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card" style="background-image:url('https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=900&auto=format&fit=crop')" onclick="document.getElementById('fleet').scrollIntoView({behavior:'smooth'})">
+        <div class="cat-arrow">↗</div>
+        <div class="cat-label"><span>From AED 1,800/day</span><h3>Sports & Supercars</h3></div>
+      </div>
+      <div class="cat-card" style="background-image:url('https://images.unsplash.com/photo-1571607388263-1044f9ea01dd?q=80&w=900&auto=format&fit=crop')" onclick="document.getElementById('fleet').scrollIntoView({behavior:'smooth'})">
+        <div class="cat-arrow">↗</div>
+        <div class="cat-label"><span>From AED 950/day</span><h3>SUV & 4x4</h3></div>
+      </div>
+      <div class="cat-card" style="background-image:url('https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=900&auto=format&fit=crop')" onclick="document.getElementById('fleet').scrollIntoView({behavior:'smooth'})">
+        <div class="cat-arrow">↗</div>
+        <div class="cat-label"><span>From AED 650/day</span><h3>Luxury Sedans</h3></div>
+      </div>
+      <div class="cat-card" style="background-image:url('https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?q=80&w=900&auto=format&fit=crop')" onclick="document.getElementById('fleet').scrollIntoView({behavior:'smooth'})">
+        <div class="cat-arrow">↗</div>
+        <div class="cat-label"><span>From AED 1,200/day</span><h3>Chauffeur Service</h3></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLEET -->
+<section class="fleet" id="fleet">
+  <div class="container">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Featured fleet</p>
+        <h2>Handpicked vehicles, ready today.</h2>
+      </div>
+      <p>Every car is inspected before and after each rental and comes with full insurance and roadside assistance.</p>
+    </div>
+    <div class="fleet-grid" id="fleetGrid"></div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why" id="services">
+  <div class="container">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Why Victoria</p>
+        <h2>Rental, without the friction.</h2>
+      </div>
+      <p>We built the process around what actually slows renters down in Dubai — and removed it.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-item"><div class="wi-num">01</div><h4>Doorstep Delivery</h4><p>Any hotel, villa or terminal across Dubai — your car arrives washed, fuelled and ready.</p></div>
+      <div class="why-item"><div class="wi-num">02</div><h4>Zero Hidden Fees</h4><p>The price you're quoted is the price you pay. Insurance and Salik included as standard.</p></div>
+      <div class="why-item"><div class="wi-num">03</div><h4>Verified Fleet</h4><p>Every vehicle passes a 120-point inspection before it's listed for rent.</p></div>
+      <div class="why-item"><div class="wi-num">04</div><h4>24/7 Concierge</h4><p>A real person on WhatsApp, day or night, for swaps, extensions or roadside help.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMO -->
+<section class="promo">
+  <div class="container promo-inner">
+    <div>
+      <p class="eyebrow" style="color:var(--gold-light)">Limited offer</p>
+      <h2>Book 3 days, get the 4th on us.</h2>
+      <p>Valid on all Luxury Sedan and SUV bookings made this month across Dubai.</p>
+    </div>
+    <a href="#book" class="btn btn-gold">Claim the Offer</a>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div class="container">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Client reviews</p>
+        <h2>What renters say about Victoria.</h2>
+      </div>
+      <p>Over 3,200 verified rentals across Dubai since 2013.</p>
+    </div>
+    <div class="rev-grid">
+      <div class="rev-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">"Delivered the S-Class to my hotel in Downtown within 40 minutes of booking. Immaculate condition and the driver walked me through everything."</p>
+        <div class="rev-person"><div class="rev-avatar">O</div><div><div class="rname">Omar Al Farsi</div><div class="rcar">Rented Mercedes S-Class</div></div></div>
+      </div>
+      <div class="rev-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">"Rented the Range Rover for a week in the desert heat — flawless AC, full tank, no surprise charges at return. Will book again in December."</p>
+        <div class="rev-person"><div class="rev-avatar">H</div><div><div class="rname">Hannah Whitfield</div><div class="rcar">Rented Range Rover Sport</div></div></div>
+      </div>
+      <div class="rev-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">"Needed a chauffeur for a client dinner on short notice. WhatsApp response in under two minutes and the car was waiting exactly on time."</p>
+        <div class="rev-person"><div class="rev-avatar">R</div><div><div class="rname">Rajesh Menon</div><div class="rcar">Chauffeur Service</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section class="booking" id="book">
+  <div class="container booking-grid">
+    <div class="booking-left">
+      <p class="eyebrow">Reserve your car</p>
+      <h2>Tell us what you need. We'll handle the rest.</h2>
+      <p>Fill in the form and our concierge team confirms availability on WhatsApp or by phone, usually within 30 minutes.</p>
+      <div class="booking-perks">
+        <div class="booking-perk"><div class="ico">✓</div><div><h5>Free cancellation</h5><p>Cancel up to 24 hours before pick-up at no charge.</p></div></div>
+        <div class="booking-perk"><div class="ico">✓</div><div><h5>Instant confirmation</h5><p>Get a confirmed reservation number the same day.</p></div></div>
+        <div class="booking-perk"><div class="ico">✓</div><div><h5>Flexible pick-up</h5><p>Any address in Dubai, or straight from DXB Arrivals.</p></div></div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form id="bookingForm">
+        <div class="form-row">
+          <div class="field"><label>Full Name</label><input type="text" id="bkfName" required placeholder="Your name"></div>
+          <div class="field"><label>Phone Number</label><input type="tel" id="bkfPhone" required placeholder="+971 5X XXX XXXX"></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Email</label><input type="email" id="bkfEmail" required placeholder="you@example.com"></div>
+          <div class="field"><label>Preferred Car</label>
+            <select id="carSelect">
+              <option>Mercedes-Benz S-Class</option>
+              <option>Range Rover Sport</option>
+              <option>Porsche 911 Carrera</option>
+              <option>BMW 7 Series</option>
+              <option>Lamborghini Huracán</option>
+              <option>Rolls-Royce Ghost</option>
+              <option>Not sure — recommend one</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Pick-up Date</label><input type="date" id="bkfPickup" required></div>
+          <div class="field"><label>Drop-off Date</label><input type="date" id="bkfDropoff" required></div>
+        </div>
+        <div class="field" style="margin-bottom:18px;">
+          <label>Pick-up Location</label>
+          <input type="text" id="bkfLocation" placeholder="Hotel, address or DXB terminal">
+        </div>
+        <div class="field" style="margin-bottom:22px;">
+          <label>Additional Notes</label>
+          <textarea id="bkfNotes" placeholder="Chauffeur needed, child seat, airport pickup time, etc."></textarea>
+        </div>
+        <button type="submit" class="btn btn-gold btn-block" id="bkfSubmitBtn">Submit Reservation Request</button>
+        <p class="form-note" id="bkfError" style="display:none;color:#C0524A;margin-top:10px;">Something went wrong sending your request — please WhatsApp us directly using the button below.</p>
+        <p class="form-note">By submitting, you agree to be contacted by our team via WhatsApp, phone or email regarding this reservation.</p>
+      </form>
+
+      <div class="success-box" id="successBox">
+        <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+        <h3>Reservation received!</h3>
+        <p>Thank you — your request has been sent to our concierge desk. Expect a WhatsApp or call within 30 minutes to confirm your booking.</p>
+        <a href="https://wa.me/971501234567" target="_blank" class="btn btn-outline">Message us on WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOCATION -->
+<section class="location" id="location">
+  <div class="container">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Visit our garage</p>
+        <h2>Find us in Downtown Dubai.</h2>
+      </div>
+    </div>
+    <div class="loc-grid">
+      <div class="loc-info">
+        <p class="eyebrow">Victoria Rental Car HQ</p>
+        <h2>Sheikh Zayed Road</h2>
+        <p>Our flagship showroom and garage sits minutes from Burj Khalifa and Dubai Mall, with a second pick-up counter at DXB Terminal 3.</p>
+        <div class="loc-row"><div class="ico">📍</div><div><h5>Address</h5><p>Office 1204, Al Saqran Tower, Sheikh Zayed Road, Downtown Dubai, UAE</p></div></div>
+        <div class="loc-row"><div class="ico">📞</div><div><h5>Phone / WhatsApp</h5><p>+971 50 123 4567</p></div></div>
+        <div class="loc-row"><div class="ico">✉️</div><div><h5>Email</h5><p>reservations@victoriarentalcar.ae</p></div></div>
+        <div class="loc-row"><div class="ico">🕐</div><div><h5>Hours</h5><p>Open 24 hours, 7 days a week</p></div></div>
+        <a href="https://wa.me/971501234567" target="_blank" class="btn btn-dark" style="margin-top:10px;">Chat on WhatsApp</a>
+      </div>
+      <div class="map-embed">
+        <iframe src="https://www.google.com/maps?q=Sheikh+Zayed+Road,+Downtown+Dubai,+UAE&output=embed" loading="lazy" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-about">
+        <div class="foot-logo">VICTORIA<span>.</span></div>
+        <p>Premium self-drive and chauffeured car rental, based in Downtown Dubai. Trusted by residents and visitors since 2013.</p>
+        <div class="foot-social">
+          <a href="#">in</a><a href="#">ig</a><a href="#">fb</a><a href="#">tw</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>Fleet</h5>
+        <ul>
+          <li><a href="#fleet">Luxury Sedans</a></li>
+          <li><a href="#fleet">SUV &amp; 4x4</a></li>
+          <li><a href="#fleet">Sports &amp; Supercars</a></li>
+          <li><a href="#fleet">Chauffeur Service</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#home">About Us</a></li>
+          <li><a href="#reviews">Reviews</a></li>
+          <li><a href="#location">Locations</a></li>
+          <li><a href="#book">Contact</a></li>
+        </ul>
+      </div>
+      <div class="foot-col foot-news">
+        <h5>Stay Updated</h5>
+        <input type="email" placeholder="Your email address">
+        <button class="btn btn-gold btn-block" type="button" onclick="alert('Subscribed! Watch your inbox for Dubai fleet offers.')">Subscribe</button>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Victoria Rental Car LLC, Dubai. All rights reserved.</span>
+      <div style="display:flex;gap:20px;">
+        <a href="#">Terms</a><a href="#">Privacy Policy</a><a href="#">Rental Agreement</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a class="wa-float" href="https://wa.me/971501234567?text=Hi%20Victoria%20Rental%20Car%2C%20I%27d%20like%20to%20book%20a%20car" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <span class="wa-pulse"></span>
+  <svg viewBox="0 0 32 32"><path d="M16.02 3C9.4 3 4 8.4 4 15.02c0 2.36.68 4.55 1.86 6.42L4 29l7.76-1.83a11.9 11.9 0 0 0 4.26.78h.01c6.62 0 12.02-5.4 12.02-12.02C28.05 8.4 22.65 3 16.02 3zm0 21.9h-.01a9.9 9.9 0 0 1-5.05-1.39l-.36-.21-3.75.89.9-3.66-.24-.38a9.85 9.85 0 0 1-1.51-5.23c0-5.46 4.44-9.9 9.92-9.9 2.65 0 5.14 1.03 7.01 2.9a9.83 9.83 0 0 1 2.9 7.01c0 5.47-4.44 9.97-9.9 9.97z"/></svg>
+</a>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<script>
+/* ---------- DATA ---------- */
+const cars = [
+  {
+    id:1, name:"Mercedes-Benz S-Class", cat:"Luxury Sedan", tag:"Best Seller",
+    img:"https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1100&auto=format&fit=crop",
+    price:650, seats:5, trans:"Automatic", fuel:"Petrol", bags:3,
+    desc:"The benchmark for executive travel in Dubai — silent cabin, massage seats and chauffeur-grade comfort for airport runs or boardroom meetings.",
+    reviews:[
+      {name:"Omar Al Farsi", stars:5, text:"Delivered within 40 minutes, spotless inside and out. Exactly as pictured."},
+      {name:"Elena Kovač", stars:5, text:"Used it for a week of client meetings — supremely comfortable and quiet."}
+    ]
+  },
+  {
+    id:2, name:"Range Rover Sport", cat:"SUV & 4x4", tag:"Popular",
+    img:"https://images.unsplash.com/photo-1571607388263-1044f9ea01dd?q=80&w=1100&auto=format&fit=crop",
+    price:950, seats:5, trans:"Automatic", fuel:"Petrol", bags:4,
+    desc:"Commanding road presence with true off-road capability — ideal for desert excursions or a confident daily drive around the city.",
+    reviews:[
+      {name:"Hannah Whitfield", stars:5, text:"Flawless AC in 45°C heat, full tank on pickup and return. Booking again."},
+      {name:"Faisal Noor", stars:4, text:"Great SUV, minor delay on delivery but staff kept me updated the whole time."}
+    ]
+  },
+  {
+    id:3, name:"Porsche 911 Carrera", cat:"Sports & Supercar", tag:"New",
+    img:"https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?q=80&w=1100&auto=format&fit=crop",
+    price:1800, seats:2, trans:"Automatic", fuel:"Petrol", bags:1,
+    desc:"A precision instrument for Sheikh Zayed Road — sharp steering, addictive flat-six sound, and a wingspan built for the fast lane.",
+    reviews:[
+      {name:"Marco Ricci", stars:5, text:"Best rental experience I've had anywhere. Car was immaculate."},
+      {name:"Aisha Khan", stars:5, text:"Rented for our anniversary — the team even added a ribbon on the wheel."}
+    ]
+  },
+  {
+    id:4, name:"BMW 7 Series", cat:"Luxury Sedan", tag:"",
+    img:"https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1100&auto=format&fit=crop",
+    price:700, seats:5, trans:"Automatic", fuel:"Petrol", bags:3,
+    desc:"Effortless power meets first-class rear cabin — a favourite among business travellers moving between Downtown and DIFC.",
+    reviews:[
+      {name:"Yusuf Demir", stars:5, text:"Rear seat comfort is unreal. Great for long airport transfers."},
+      {name:"Priya Nair", stars:4, text:"Smooth handover process, car was ready ahead of schedule."}
+    ]
+  },
+  {
+    id:5, name:"Lamborghini Huracán", cat:"Sports & Supercar", tag:"Exotic",
+    img:"https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=1100&auto=format&fit=crop",
+    price:2400, seats:2, trans:"Automatic", fuel:"Petrol", bags:1,
+    desc:"Turn heads on the Marina strip — a naturally aspirated V10 and a cabin built purely for theatre and thrill.",
+    reviews:[
+      {name:"Daniel Osei", stars:5, text:"Unreal experience along JBR. Concierge briefed me thoroughly before handover."},
+      {name:"Sara Malik", stars:5, text:"Booked it for a birthday shoot — process was seamless start to finish."}
+    ]
+  },
+  {
+    id:6, name:"Rolls-Royce Ghost", cat:"Chauffeur Service", tag:"VIP",
+    img:"https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=1100&auto=format&fit=crop",
+    price:2200, seats:4, trans:"Automatic", fuel:"Petrol", bags:3,
+    desc:"For arrivals that need to make a statement — comes standard with a professional chauffeur and starlight headliner.",
+    reviews:[
+      {name:"Grace Lin", stars:5, text:"Chauffeur was punctual and professional. Made our wedding arrival unforgettable."},
+      {name:"Khalid Rahman", stars:5, text:"Used it for a VIP client pickup at DXB — flawless from booking to drop-off."}
+    ]
+  }
+];
+
+/* ---------- RENDER FLEET ---------- */
+const fleetGrid = document.getElementById('fleetGrid');
+fleetGrid.innerHTML = cars.map(c => `
+  <div class="car-card" onclick="openModal(${c.id})">
+    <div class="car-img" style="background-image:url('${c.img}')">
+      ${c.tag ? `<div class="car-tag">${c.tag}</div>` : ''}
+    </div>
+    <div class="car-body">
+      <div class="cname">${c.name}</div>
+      <div class="car-specs">
+        <span>👤 ${c.seats} Seats</span><span>⚙ ${c.trans}</span><span>⛽ ${c.fuel}</span>
+      </div>
+      <div class="car-foot">
+        <div class="car-price">AED ${c.price}<small> / day</small></div>
+        <div class="car-cta">View &amp; Book →</div>
+      </div>
+    </div>
+  </div>
+`).join('');
+
+/* ---------- MODAL ---------- */
+function stars(n){ return '★'.repeat(n) + '☆'.repeat(5-n); }
+
+function openModal(id){
+  const c = cars.find(x => x.id === id);
+  const box = document.getElementById('modalBox');
+  box.innerHTML = `
+    <div class="modal-close" onclick="closeModal()">✕</div>
+    <div class="modal-hero" style="background-image:url('${c.img}')"></div>
+    <div class="modal-content">
+      <div class="modal-top">
+        <div>
+          <p class="eyebrow">${c.cat}</p>
+          <h3>${c.name}</h3>
+        </div>
+        <div class="modal-price"><div class="amt">AED ${c.price}</div><small>per day, insurance included</small></div>
+      </div>
+      <p class="modal-desc">${c.desc}</p>
+      <div class="modal-specs">
+        <div class="modal-spec"><div class="v">${c.seats}</div><div class="l">Seats</div></div>
+        <div class="modal-spec"><div class="v">${c.trans}</div><div class="l">Transmission</div></div>
+        <div class="modal-spec"><div class="v">${c.fuel}</div><div class="l">Fuel</div></div>
+        <div class="modal-spec"><div class="v">${c.bags}</div><div class="l">Bags</div></div>
+      </div>
+      <p class="modal-rev-title">Guest Reviews</p>
+      <div class="modal-reviews">
+        ${c.reviews.map(r => `
+          <div class="modal-rev-card">
+            <div class="stars">${stars(r.stars)}</div>
+            <p>"${r.text}"</p>
+            <div class="who">${r.name}</div>
+          </div>
+        `).join('')}
+      </div>
+      <button class="btn btn-gold btn-block" onclick="bookThisCar('${c.name}')">Book This Car</button>
+    </div>
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target.id==='modalOverlay') closeModal(); });
+
+function bookThisCar(name){
+  closeModal();
+  const sel = document.getElementById('carSelect');
+  for (const opt of sel.options){ if(opt.text === name){ sel.value = name; break; } }
+  document.getElementById('book').scrollIntoView({behavior:'smooth'});
+}
+
+/* ---------- BOOKING FORM SUBMIT ---------- */
+document.getElementById('bookingForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const form = this;
+  const btn = document.getElementById('bkfSubmitBtn');
+  const errNote = document.getElementById('bkfError');
+  errNote.style.display = 'none';
+
+  const carName = document.getElementById('carSelect').value;
+  const car = cars.find(c => c.name === carName);
+  const pickup = document.getElementById('bkfPickup').value;
+  const dropoff = document.getElementById('bkfDropoff').value;
+  const days = Math.max(1, Math.round((new Date(dropoff) - new Date(pickup)) / 86400000));
+  const amount = car ? car.price * days : 0;
+
+  const payload = {
+    customer: document.getElementById('bkfName').value.trim(),
+    phone: document.getElementById('bkfPhone').value.trim(),
+    email: document.getElementById('bkfEmail').value.trim(),
+    car: carName,
+    carId: car ? car.id : null,
+    pickup, dropoff,
+    location: document.getElementById('bkfLocation').value.trim(),
+    notes: document.getElementById('bkfNotes').value.trim(),
+    status: 'pending',
+    amount,
+    createdAt: new Date().toISOString()
+  };
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  try {
+    await db.collection('bookings').add(payload);
+    form.style.display = 'none';
+    document.getElementById('successBox').classList.add('show');
+  } catch (err) {
+    console.error('Booking save failed:', err);
+    btn.disabled = false;
+    btn.textContent = 'Submit Reservation Request';
+    errNote.style.display = 'block';
+  }
+});
+
+document.getElementById('quickBookForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  document.getElementById('fleet').scrollIntoView({behavior:'smooth'});
+});
+
+/* ---------- HEADER SCROLL ---------- */
+window.addEventListener('scroll', () => {
+  document.getElementById('siteHeader').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* ---------- MOBILE NAV ---------- */
+const mobileNav = document.getElementById('mobileNav');
+mobileNav.innerHTML = ['Home','Fleet','Services','Reviews','Location','Contact'].map(t =>
+  `<a href="#${t==='Contact'?'book':t.toLowerCase()}" style="color:#fff;font-size:14px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;" onclick="document.getElementById('mobileNav').classList.remove('open')">${t}</a>`
+).join('');
+document.querySelectorAll('#mobileNav a').forEach(a=>{});
+const style = document.createElement('style');
+style.innerHTML = `#mobileNav.open{display:flex !important;}`;
+document.head.appendChild(style);
+
+/* ---------- IMAGE FALLBACK ---------- */
+document.querySelectorAll('img').forEach(img=>{
+  img.addEventListener('error', () => { img.style.background = 'linear-gradient(135deg,#20261F,#0E1210)'; });
+});
+</script>
+</body>
+</html>

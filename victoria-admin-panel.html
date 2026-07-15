@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Victoria Rental Car — Admin Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --ink:#0E1210;
+    --ink-2:#171C19;
+    --ink-3:#20261F;
+    --sand:#F3EEE3;
+    --sand-2:#EAE1CC;
+    --gold:#B8935B;
+    --gold-light:#D9BD8C;
+    --gold-deep:#8E6E3E;
+    --white:#FFFFFF;
+    --text-dark:#15180F;
+    --text-muted:#6E6A5C;
+    --line:rgba(184,147,91,0.28);
+    --success:#3FCF62;
+    --warning:#D9A441;
+    --danger:#9C4A3E;
+    --info:#5B7B8C;
+    --radius:2px;
+    --sidebar-w:252px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--sand);
+    color:var(--text-dark);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4,.display{font-family:'Fraunces',serif;letter-spacing:-0.01em;}
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;}
+  .tabular{font-variant-numeric:tabular-nums;}
+
+  /* ===== LOGIN ===== */
+  .login-screen{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 20% 20%,rgba(184,147,91,0.14),transparent 45%),var(--ink);
+    padding:24px;
+  }
+  .login-card{
+    width:100%;max-width:380px;background:var(--ink-2);border:1px solid rgba(255,255,255,0.08);
+    border-radius:var(--radius);padding:44px 40px;text-align:center;
+  }
+  .login-logo{font-family:'Fraunces',serif;font-size:26px;color:#fff;font-weight:700;letter-spacing:0.02em;margin-bottom:6px;}
+  .login-logo span{color:var(--gold);}
+  .login-sub{font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin-bottom:34px;}
+  .login-field{text-align:left;margin-bottom:16px;}
+  .login-field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.5);margin-bottom:7px;font-weight:700;}
+  .login-field input{
+    width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:2px;
+    padding:12px 14px;color:#fff;font-size:14px;
+  }
+  .login-field input:focus{outline:none;border-color:var(--gold);}
+  .login-btn{
+    width:100%;margin-top:10px;background:var(--gold);color:var(--ink);border:none;padding:14px;
+    font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;border-radius:2px;cursor:pointer;transition:.2s;
+  }
+  .login-btn:hover{background:var(--gold-light);}
+  .login-hint{margin-top:20px;font-size:11.5px;color:rgba(255,255,255,0.35);line-height:1.6;}
+  .login-error{color:#E0827A;font-size:12.5px;margin-top:10px;min-height:16px;}
+
+  /* ===== SHELL ===== */
+  .shell{display:none;min-height:100vh;}
+  .shell.active{display:flex;}
+  .sidebar{
+    width:var(--sidebar-w);flex-shrink:0;background:var(--ink);color:#fff;
+    position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:50;
+  }
+  .side-brand{padding:28px 26px 22px;border-bottom:1px solid rgba(255,255,255,0.08);}
+  .side-brand .lg{font-family:'Fraunces',serif;font-size:21px;font-weight:700;letter-spacing:0.02em;}
+  .side-brand .lg span{color:var(--gold);}
+  .side-brand .tag{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:5px;font-weight:700;}
+  .side-nav{flex:1;padding:18px 14px;overflow-y:auto;}
+  .side-nav .grp-label{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:rgba(255,255,255,0.32);font-weight:700;padding:14px 12px 8px;}
+  .nav-item{
+    display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:2px;color:rgba(255,255,255,0.68);
+    font-size:13.5px;font-weight:600;cursor:pointer;transition:.15s;margin-bottom:2px;position:relative;
+  }
+  .nav-item .ic{width:18px;text-align:center;font-size:15px;flex-shrink:0;}
+  .nav-item:hover{background:rgba(255,255,255,0.05);color:#fff;}
+  .nav-item.active{background:rgba(184,147,91,0.14);color:var(--gold-light);}
+  .nav-item.active::before{content:"";position:absolute;left:-14px;top:8px;bottom:8px;width:3px;background:var(--gold);border-radius:2px;}
+  .nav-badge{
+    margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:700;
+    padding:2px 7px;border-radius:20px;min-width:18px;text-align:center;
+  }
+  .side-foot{padding:18px 22px;border-top:1px solid rgba(255,255,255,0.08);font-size:12px;color:rgba(255,255,255,0.4);}
+  .side-foot .who{color:#fff;font-weight:700;font-size:13px;margin-bottom:2px;}
+  .logout-link{display:inline-block;margin-top:8px;color:var(--gold-light);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;}
+
+  .main{margin-left:var(--sidebar-w);flex:1;min-width:0;}
+  .topbar{
+    position:sticky;top:0;z-index:40;background:rgba(243,238,227,0.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--sand-2);padding:20px 36px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  }
+  .topbar h1{font-size:24px;font-weight:600;}
+  .topbar .sub{font-size:12.5px;color:var(--text-muted);margin-top:3px;}
+  .topbar-right{display:flex;align-items:center;gap:14px;}
+  .clock{font-size:12.5px;color:var(--text-muted);text-align:right;}
+  .clock b{display:block;color:var(--text-dark);font-size:13.5px;}
+  .avatar{
+    width:38px;height:38px;border-radius:50%;background:var(--gold);color:var(--ink);display:flex;
+    align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:15px;
+  }
+  .page{padding:32px 36px 70px;max-width:1400px;}
+  .page-section{display:none;}
+  .page-section.active{display:block;}
+
+  /* ===== BUTTONS ===== */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    padding:12px 22px;font-size:12.5px;letter-spacing:0.06em;text-transform:uppercase;
+    font-weight:700;border-radius:var(--radius);cursor:pointer;border:1px solid transparent;
+    transition:all .2s ease;white-space:nowrap;
+  }
+  .btn-gold{background:var(--gold);color:var(--ink);}
+  .btn-gold:hover{background:var(--gold-light);}
+  .btn-dark{background:var(--ink);color:var(--sand);}
+  .btn-dark:hover{background:var(--ink-3);}
+  .btn-ghost{background:transparent;border-color:var(--sand-2);color:var(--text-dark);}
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold-deep);}
+  .btn-sm{padding:8px 14px;font-size:11px;}
+  .btn-danger{background:transparent;border-color:rgba(156,74,62,0.4);color:var(--danger);}
+  .btn-danger:hover{background:var(--danger);color:#fff;}
+  .btn-success{background:var(--success);color:#04220E;}
+  .btn-success:hover{opacity:0.88;}
+  .icon-btn{
+    width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+    border:1px solid var(--sand-2);cursor:pointer;transition:.2s;color:var(--text-muted);background:var(--white);
+  }
+  .icon-btn:hover{border-color:var(--gold);color:var(--gold-deep);}
+
+  /* ===== KPI LEDGER (signature element) ===== */
+  .ledger{
+    background:var(--ink);border-radius:var(--radius);padding:0;margin-bottom:30px;
+    display:grid;grid-template-columns:repeat(5,1fr);overflow:hidden;
+  }
+  .ledger-item{padding:26px 24px;border-right:1px solid rgba(255,255,255,0.08);position:relative;}
+  .ledger-item:last-child{border-right:none;}
+  .ledger-item .l-eyebrow{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold-light);font-weight:700;display:flex;align-items:center;gap:8px;}
+  .ledger-item .l-num{font-family:'Fraunces',serif;font-size:30px;color:#fff;font-weight:600;margin-top:10px;}
+  .ledger-item .l-num small{font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);font-weight:600;}
+  .ledger-item .l-delta{font-size:11px;margin-top:6px;font-weight:600;}
+  .l-delta.up{color:var(--success);}
+  .l-delta.down{color:#E0827A;}
+  .l-delta.flat{color:rgba(255,255,255,0.4);}
+
+  /* ===== CARDS / GRID ===== */
+  .grid-2{display:grid;grid-template-columns:1.5fr 1fr;gap:22px;margin-bottom:22px;}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:22px;}
+  .card{background:var(--white);border:1px solid var(--sand-2);border-radius:var(--radius);padding:26px;}
+  .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:14px;flex-wrap:wrap;}
+  .card-head h3{font-size:16px;font-weight:600;}
+  .card-head .ch-sub{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+  .seg{display:flex;background:var(--sand);border-radius:2px;padding:3px;gap:2px;}
+  .seg button{
+    border:none;background:transparent;padding:7px 13px;font-size:11px;font-weight:700;text-transform:uppercase;
+    letter-spacing:0.04em;border-radius:2px;cursor:pointer;color:var(--text-muted);transition:.15s;
+  }
+  .seg button.active{background:var(--ink);color:var(--gold-light);}
+  .chart-wrap{position:relative;height:280px;}
+  .chart-wrap.short{height:220px;}
+
+  /* ===== TABLE ===== */
+  .table-card{background:var(--white);border:1px solid var(--sand-2);border-radius:var(--radius);overflow:hidden;}
+  .table-toolbar{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--sand-2);}
+  .table-toolbar .tt-left{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .search-box{position:relative;}
+  .search-box input{
+    padding:10px 14px 10px 34px;border:1px solid var(--sand-2);border-radius:2px;font-size:13px;width:220px;background:var(--sand);
+  }
+  .search-box input:focus{outline:none;border-color:var(--gold);}
+  .search-box::before{content:"⌕";position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:15px;}
+  select.filter-sel, input.filter-date{
+    padding:10px 12px;border:1px solid var(--sand-2);border-radius:2px;font-size:12.5px;background:var(--sand);color:var(--text-dark);font-weight:600;
+  }
+  table{width:100%;border-collapse:collapse;}
+  thead th{
+    text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);
+    padding:12px 24px;background:var(--sand);font-weight:700;border-bottom:1px solid var(--sand-2);white-space:nowrap;
+  }
+  tbody td{padding:15px 24px;font-size:13.5px;border-bottom:1px solid var(--sand-2);vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(184,147,91,0.05);}
+  .cust-name{font-weight:700;}
+  .cust-sub{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:10.5px;
+    font-weight:700;text-transform:uppercase;letter-spacing:0.04em;
+  }
+  .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .badge.pending{background:rgba(217,164,65,0.15);color:var(--warning);}
+  .badge.confirmed{background:rgba(91,123,140,0.15);color:var(--info);}
+  .badge.completed{background:rgba(63,207,98,0.15);color:#1E8E44;}
+  .badge.cancelled{background:rgba(156,74,62,0.13);color:var(--danger);}
+  .badge.new{background:rgba(217,164,65,0.15);color:var(--warning);}
+  .badge.replied{background:rgba(91,123,140,0.15);color:var(--info);}
+  .badge.closed{background:rgba(63,207,98,0.15);color:#1E8E44;}
+  .row-actions{display:flex;gap:8px;}
+  .empty-state{padding:70px 24px;text-align:center;color:var(--text-muted);}
+  .empty-state .es-ic{font-size:30px;margin-bottom:12px;}
+  .empty-state h4{font-size:15px;color:var(--text-dark);margin-bottom:6px;}
+  .pager{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;font-size:12px;color:var(--text-muted);}
+
+  /* ===== FLEET GRID ===== */
+  .fleet-admin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .fa-card{background:var(--white);border:1px solid var(--sand-2);border-radius:var(--radius);overflow:hidden;}
+  .fa-img{height:150px;background-size:cover;background-position:center;position:relative;}
+  .fa-avail{position:absolute;top:12px;left:12px;padding:5px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;}
+  .fa-avail.on{background:rgba(63,207,98,0.9);color:#04220E;}
+  .fa-avail.off{background:rgba(156,74,62,0.9);color:#fff;}
+  .fa-body{padding:18px 20px 20px;}
+  .fa-cat{font-size:10.5px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-deep);font-weight:700;}
+  .fa-name{font-size:16.5px;font-weight:600;margin:4px 0 10px;}
+  .fa-stats{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-muted);margin-bottom:14px;}
+  .fa-stats b{color:var(--text-dark);font-family:'Fraunces',serif;font-size:14px;display:block;}
+  .fa-actions{display:flex;gap:8px;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--sand-2);}
+  .toggle{position:relative;width:38px;height:21px;border-radius:20px;background:var(--sand-2);cursor:pointer;transition:.2s;flex-shrink:0;}
+  .toggle.on{background:var(--success);}
+  .toggle::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);}
+  .toggle.on::after{left:19px;}
+
+  /* ===== WHATSAPP LIST ===== */
+  .wa-list{display:flex;flex-direction:column;}
+  .wa-row{display:flex;gap:16px;padding:18px 24px;border-bottom:1px solid var(--sand-2);align-items:flex-start;}
+  .wa-row:last-child{border-bottom:none;}
+  .wa-ava{width:42px;height:42px;border-radius:50%;background:var(--ink);color:var(--gold-light);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;flex-shrink:0;}
+  .wa-body{flex:1;min-width:0;}
+  .wa-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:4px;}
+  .wa-name{font-weight:700;font-size:13.5px;}
+  .wa-time{font-size:11px;color:var(--text-muted);white-space:nowrap;}
+  .wa-msg{font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:10px;}
+  .wa-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+  .wa-actions{display:flex;gap:8px;}
+
+  /* ===== MODAL / FORM ===== */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(8,10,8,0.72);backdrop-filter:blur(4px);z-index:300;
+    display:none;align-items:center;justify-content:center;padding:24px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:var(--white);max-width:560px;width:100%;max-height:88vh;overflow-y:auto;border-radius:var(--radius);}
+  .modal-box.wide{max-width:760px;}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;padding:24px 28px;border-bottom:1px solid var(--sand-2);}
+  .modal-head h3{font-size:19px;font-weight:600;}
+  .modal-x{width:32px;height:32px;border-radius:50%;background:var(--sand);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;}
+  .modal-body{padding:26px 28px 30px;}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .fld label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold-deep);margin-bottom:7px;font-weight:700;}
+  .fld input,.fld select,.fld textarea{
+    width:100%;border:1px solid var(--sand-2);border-radius:2px;padding:11px 13px;font-size:13.5px;
+    font-family:'Inter',sans-serif;background:var(--sand);color:var(--text-dark);
+  }
+  .fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--gold);background:var(--white);}
+  .fld textarea{resize:vertical;min-height:70px;}
+  .fld{margin-bottom:16px;}
+  .modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:8px;}
+
+  /* ===== REPORTS ===== */
+  .report-controls{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:24px;}
+  .report-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+  .rs-card{background:var(--white);border:1px solid var(--sand-2);border-radius:var(--radius);padding:20px;}
+  .rs-card .rl{font-size:10.5px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);font-weight:700;}
+  .rs-card .rv{font-family:'Fraunces',serif;font-size:26px;margin-top:8px;font-weight:600;}
+
+  /* ===== TOAST ===== */
+  .toast{
+    position:fixed;bottom:26px;right:26px;background:var(--ink);color:#fff;padding:14px 22px;border-radius:2px;
+    font-size:13px;font-weight:600;z-index:500;box-shadow:0 12px 30px rgba(0,0,0,0.3);display:flex;align-items:center;gap:10px;
+    transform:translateY(20px);opacity:0;transition:.25s;pointer-events:none;
+  }
+  .toast.show{transform:translateY(0);opacity:1;}
+  .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--success);}
+
+  ::-webkit-scrollbar{width:9px;height:9px;}
+  ::-webkit-scrollbar-thumb{background:var(--sand-2);border-radius:10px;}
+
+  @media print{
+    .sidebar,.topbar,.no-print{display:none !important;}
+    .main{margin-left:0 !important;}
+    body{background:#fff;}
+  }
+
+  @media (max-width:1100px){
+    .grid-2,.grid-3{grid-template-columns:1fr;}
+    .fleet-admin-grid{grid-template-columns:repeat(2,1fr);}
+    .ledger{grid-template-columns:repeat(2,1fr);}
+    .ledger-item:nth-child(2){border-right:none;}
+  }
+  @media (max-width:720px){
+    .sidebar{transform:translateX(-100%);transition:.25s;}
+    .sidebar.mobile-open{transform:translateX(0);}
+    .main{margin-left:0;}
+    .fleet-admin-grid{grid-template-columns:1fr;}
+    .frow{grid-template-columns:1fr;}
+    .ledger{grid-template-columns:1fr;}
+    .ledger-item{border-right:none;border-bottom:1px solid rgba(255,255,255,0.08);}
+    .report-summary{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">VICTORIA<span>.</span></div>
+    <div class="login-sub">Admin Console</div>
+    <form id="loginForm">
+      <div class="login-field">
+        <label>Admin Password</label>
+        <input type="password" id="loginPass" placeholder="Enter password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+      <div class="login-error" id="loginError"></div>
+    </form>
+    <div class="login-hint">Password is set as the ADMIN_PASSWORD environment variable in Vercel.<br>See SETUP-GUIDE.md if you haven't set one yet.</div>
+  </div>
+</div>
+
+<!-- ===================== SHELL ===================== -->
+<div class="shell" id="shell">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="side-brand">
+      <div class="lg">VICTORIA<span>.</span></div>
+      <div class="tag">Admin Console</div>
+    </div>
+    <nav class="side-nav">
+      <div class="grp-label">Overview</div>
+      <div class="nav-item active" data-page="dashboard"><span class="ic">▦</span> Dashboard</div>
+      <div class="grp-label">Operations</div>
+      <div class="nav-item" data-page="bookings"><span class="ic">🗂</span> Bookings<span class="nav-badge" id="badgeBookings" style="display:none;"></span></div>
+      <div class="nav-item" data-page="whatsapp"><span class="ic">💬</span> WhatsApp Queries<span class="nav-badge" id="badgeWA" style="display:none;"></span></div>
+      <div class="nav-item" data-page="fleet"><span class="ic">🚗</span> Fleet</div>
+      <div class="grp-label">Insights</div>
+      <div class="nav-item" data-page="reports"><span class="ic">📊</span> Revenue &amp; Reports</div>
+      <div class="grp-label">System</div>
+      <div class="nav-item" data-page="settings"><span class="ic">⚙</span> Settings</div>
+    </nav>
+    <div class="side-foot">
+      <div class="who">Admin User</div>
+      <div>reservations@victoriarentalcar.ae</div>
+      <span class="logout-link" id="logoutBtn">Sign Out →</span>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="pageTitle">Dashboard</h1>
+        <div class="sub" id="pageSub">Live overview of bookings, revenue and fleet status</div>
+      </div>
+      <div class="topbar-right">
+        <div class="clock"><b id="clockTime">--:--</b><span id="clockDate">--</span></div>
+        <div class="avatar">A</div>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <!-- ============ DASHBOARD ============ -->
+      <section class="page-section active" id="page-dashboard">
+        <div class="ledger" id="ledgerStrip"></div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Revenue Trend</h3>
+                <div class="ch-sub">Confirmed &amp; completed bookings</div>
+              </div>
+              <div class="seg" id="revSeg">
+                <button data-p="daily" class="active">Daily</button>
+                <button data-p="weekly">Weekly</button>
+                <button data-p="monthly">Monthly</button>
+              </div>
+            </div>
+            <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Bookings by Category</h3><div class="ch-sub">Share of total reservations</div></div>
+            </div>
+            <div class="chart-wrap"><canvas id="categoryChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Revenue by Vehicle</h3><div class="ch-sub">Top earning cars, all time</div></div>
+            </div>
+            <div class="chart-wrap"><canvas id="fleetChart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Recent Activity</h3><div class="ch-sub">Latest bookings &amp; messages</div></div>
+            </div>
+            <div id="activityFeed" style="display:flex;flex-direction:column;gap:14px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ BOOKINGS ============ -->
+      <section class="page-section" id="page-bookings">
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div class="tt-left">
+              <div class="search-box"><input type="text" id="bookingSearch" placeholder="Search customer, car, phone…"></div>
+              <select class="filter-sel" id="bookingStatusFilter">
+                <option value="">All statuses</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              <select class="filter-sel" id="bookingCarFilter"><option value="">All vehicles</option></select>
+            </div>
+            <button class="btn btn-gold" id="addBookingBtn">+ New Booking</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr>
+                <th>Customer</th><th>Vehicle</th><th>Pick-up → Drop-off</th><th>Amount</th><th>Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="bookingsTbody"></tbody>
+            </table>
+          </div>
+          <div id="bookingsEmpty" class="empty-state" style="display:none;">
+            <div class="es-ic">🗂</div><h4>No bookings match your filters</h4><p>Try clearing the search or filters above.</p>
+          </div>
+          <div class="pager"><span id="bookingsCount">0 bookings</span></div>
+        </div>
+      </section>
+
+      <!-- ============ WHATSAPP ============ -->
+      <section class="page-section" id="page-whatsapp">
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div class="tt-left">
+              <div class="search-box"><input type="text" id="waSearch" placeholder="Search name, phone, message…"></div>
+              <select class="filter-sel" id="waStatusFilter">
+                <option value="">All statuses</option>
+                <option value="new">New</option>
+                <option value="replied">Replied</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+            <button class="btn btn-gold" id="addQueryBtn">+ Log Query</button>
+          </div>
+          <div class="wa-list" id="waList"></div>
+          <div id="waEmpty" class="empty-state" style="display:none;">
+            <div class="es-ic">💬</div><h4>No WhatsApp queries found</h4><p>New enquiries from the site's WhatsApp button will appear here.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ FLEET ============ -->
+      <section class="page-section" id="page-fleet">
+        <div class="table-toolbar" style="background:var(--white);border:1px solid var(--sand-2);border-radius:2px;margin-bottom:20px;">
+          <div class="tt-left">
+            <div class="search-box"><input type="text" id="fleetSearch" placeholder="Search fleet…"></div>
+            <select class="filter-sel" id="fleetAvailFilter">
+              <option value="">All vehicles</option>
+              <option value="on">Available only</option>
+              <option value="off">Unavailable only</option>
+            </select>
+          </div>
+          <button class="btn btn-gold" id="addCarBtn">+ Add Vehicle</button>
+        </div>
+        <div class="fleet-admin-grid" id="fleetGridAdmin"></div>
+      </section>
+
+      <!-- ============ REPORTS ============ -->
+      <section class="page-section" id="page-reports">
+        <div class="card" style="margin-bottom:24px;">
+          <div class="card-head"><div><h3>Generate Report</h3><div class="ch-sub">Choose a range to summarise sales &amp; fleet performance</div></div></div>
+          <div class="report-controls">
+            <div class="fld" style="margin:0;"><label>Preset</label>
+              <select class="filter-sel" id="reportPreset">
+                <option value="7">Last 7 days</option>
+                <option value="30" selected>Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="month">This month</option>
+                <option value="year">This year</option>
+                <option value="custom">Custom range</option>
+              </select>
+            </div>
+            <div class="fld" style="margin:0;" id="customFromWrap"><label>From</label><input type="date" class="filter-date" id="reportFrom"></div>
+            <div class="fld" style="margin:0;" id="customToWrap"><label>To</label><input type="date" class="filter-date" id="reportTo"></div>
+            <button class="btn btn-dark" id="generateReportBtn">Generate</button>
+            <button class="btn btn-ghost" id="exportCsvBtn">⬇ Export CSV</button>
+            <button class="btn btn-ghost" id="printReportBtn">🖨 Print</button>
+          </div>
+        </div>
+
+        <div id="reportOutput">
+          <div class="report-summary">
+            <div class="rs-card"><div class="rl">Total Revenue</div><div class="rv tabular" id="repRevenue">AED 0</div></div>
+            <div class="rs-card"><div class="rl">Bookings</div><div class="rv tabular" id="repBookings">0</div></div>
+            <div class="rs-card"><div class="rl">Avg. Booking Value</div><div class="rv tabular" id="repAvg">AED 0</div></div>
+            <div class="rs-card"><div class="rl">Fleet Utilisation</div><div class="rv tabular" id="repUtil">0%</div></div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Revenue by Vehicle</h3></div>
+              <div style="overflow-x:auto;"><table id="repVehicleTable"><thead><tr><th>Vehicle</th><th>Bookings</th><th>Revenue</th></tr></thead><tbody></tbody></table></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Bookings by Status</h3></div>
+              <div class="chart-wrap short"><canvas id="repStatusChart"></canvas></div>
+            </div>
+          </div>
+          <div class="table-card">
+            <div class="table-toolbar"><h3 style="font-size:15px;">Bookings in Range</h3></div>
+            <div style="overflow-x:auto;"><table><thead><tr><th>Customer</th><th>Vehicle</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody id="repBookingsTbody"></tbody></table></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SETTINGS ============ -->
+      <section class="page-section" id="page-settings">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><h3>Business Details</h3></div>
+            <div class="fld"><label>Business Name</label><input type="text" value="Victoria Rental Car LLC" id="setBizName"></div>
+            <div class="fld"><label>WhatsApp / Phone</label><input type="text" value="+971 50 123 4567" id="setPhone"></div>
+            <div class="fld"><label>Reservations Email</label><input type="text" value="reservations@victoriarentalcar.ae" id="setEmail"></div>
+            <div class="fld"><label>Address</label><textarea id="setAddr">Office 1204, Al Saqran Tower, Sheikh Zayed Road, Downtown Dubai, UAE</textarea></div>
+            <button class="btn btn-gold" id="saveSettingsBtn">Save Changes</button>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Demo Data</h3></div>
+            <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:18px;">
+              This console stores its data in your Claude workspace storage so it persists between visits.
+              Use the option below to wipe everything back to freshly seeded sample data.
+            </p>
+            <button class="btn btn-danger" id="resetDataBtn">Reset to Sample Data</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODALS ===================== -->
+<div class="modal-overlay" id="bookingModalOverlay">
+  <div class="modal-box wide">
+    <div class="modal-head"><h3 id="bookingModalTitle">New Booking</h3><div class="modal-x" data-close="bookingModalOverlay">✕</div></div>
+    <div class="modal-body">
+      <form id="bookingForm">
+        <input type="hidden" id="bkId">
+        <div class="frow">
+          <div class="fld"><label>Customer Name</label><input type="text" id="bkName" required></div>
+          <div class="fld"><label>Phone</label><input type="text" id="bkPhone" required placeholder="+971 5X XXX XXXX"></div>
+        </div>
+        <div class="frow">
+          <div class="fld"><label>Email</label><input type="email" id="bkEmail"></div>
+          <div class="fld"><label>Vehicle</label><select id="bkCar" required></select></div>
+        </div>
+        <div class="frow">
+          <div class="fld"><label>Pick-up Date</label><input type="date" id="bkPickup" required></div>
+          <div class="fld"><label>Drop-off Date</label><input type="date" id="bkDropoff" required></div>
+        </div>
+        <div class="frow">
+          <div class="fld"><label>Pick-up Location</label><input type="text" id="bkLocation" placeholder="Hotel, address or DXB terminal"></div>
+          <div class="fld"><label>Status</label>
+            <select id="bkStatus">
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+        <div class="fld"><label>Total Amount (AED) — auto-calculated, editable</label><input type="number" id="bkAmount" min="0" step="1"></div>
+        <div class="fld"><label>Notes</label><textarea id="bkNotes" placeholder="Chauffeur needed, child seat, airport pickup time, etc."></textarea></div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" data-close="bookingModalOverlay">Cancel</button>
+          <button type="submit" class="btn btn-gold">Save Booking</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="queryModalOverlay">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="queryModalTitle">Log WhatsApp Query</h3><div class="modal-x" data-close="queryModalOverlay">✕</div></div>
+    <div class="modal-body">
+      <form id="queryForm">
+        <input type="hidden" id="qId">
+        <div class="fld"><label>Name</label><input type="text" id="qName" required></div>
+        <div class="fld"><label>Phone (with country code)</label><input type="text" id="qPhone" required placeholder="971501234567"></div>
+        <div class="fld"><label>Message</label><textarea id="qMessage" required placeholder="What the customer asked about"></textarea></div>
+        <div class="fld"><label>Status</label>
+          <select id="qStatus"><option value="new">New</option><option value="replied">Replied</option><option value="closed">Closed</option></select>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" data-close="queryModalOverlay">Cancel</button>
+          <button type="submit" class="btn btn-gold">Save Query</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="carModalOverlay">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="carModalTitle">Add Vehicle</h3><div class="modal-x" data-close="carModalOverlay">✕</div></div>
+    <div class="modal-body">
+      <form id="carForm">
+        <input type="hidden" id="carId">
+        <div class="fld"><label>Vehicle Name</label><input type="text" id="carName" required placeholder="e.g. Audi Q8"></div>
+        <div class="frow">
+          <div class="fld"><label>Category</label>
+            <select id="carCat">
+              <option>Luxury Sedan</option><option>SUV &amp; 4x4</option><option>Sports &amp; Supercar</option><option>Chauffeur Service</option>
+            </select>
+          </div>
+          <div class="fld"><label>Price / Day (AED)</label><input type="number" id="carPrice" required min="0"></div>
+        </div>
+        <div class="frow">
+          <div class="fld"><label>Seats</label><input type="number" id="carSeats" value="5" min="1"></div>
+          <div class="fld"><label>Transmission</label>
+            <select id="carTrans"><option>Automatic</option><option>Manual</option></select>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fld"><label>Fuel</label><select id="carFuel"><option>Petrol</option><option>Diesel</option><option>Electric</option><option>Hybrid</option></select></div>
+          <div class="fld"><label>Image URL</label><input type="text" id="carImg" placeholder="https://…"></div>
+        </div>
+        <div class="fld" style="display:flex;align-items:center;gap:12px;">
+          <div class="toggle on" id="carAvailToggle"></div><label style="margin:0;">Available for booking</label>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" data-close="carModalOverlay">Cancel</button>
+          <button type="submit" class="btn btn-gold">Save Vehicle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastMsg">Saved</span></div>
+
+<script>
+/* ============================================================
+   STATE + API CLIENT
+   ============================================================ */
+let state = { bookings:[], queries:[], fleet:[], settings:{} };
+let charts = {};
+let currentRevPeriod = 'daily';
+let pollTimer = null;
+const POLL_INTERVAL_MS = 8000;
+
+function fmtMoney(n){ return 'AED ' + Math.round(n).toLocaleString('en-US'); }
+function dateStr(d){ return d.toISOString().slice(0,10); }
+function daysBetween(a,b){ return Math.max(1, Math.round((new Date(b)-new Date(a))/86400000)); }
+
+async function apiGet(path){
+  const res = await fetch(path, {credentials:'include'});
+  if(res.status === 401){ showLogin(); throw new Error('Not authenticated'); }
+  if(!res.ok) throw new Error('Request failed: ' + path);
+  return res.json();
+}
+async function apiPost(path, body){
+  const res = await fetch(path, {
+    method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include',
+    body: JSON.stringify(body||{})
+  });
+  if(res.status === 401){ showLogin(); throw new Error('Not authenticated'); }
+  if(!res.ok){ const d = await res.json().catch(()=>({})); throw new Error(d.error || 'Request failed'); }
+  return res.json();
+}
+async function apiDelete(path){
+  const res = await fetch(path, {method:'DELETE', credentials:'include'});
+  if(res.status === 401){ showLogin(); throw new Error('Not authenticated'); }
+  if(!res.ok) throw new Error('Request failed: ' + path);
+  return res.json();
+}
+
+/* ---- Polling: this is what makes new website bookings and incoming
+   WhatsApp messages appear automatically, without a page refresh ---- */
+async function pollData(){
+  try{
+    const [bookings, queries, fleet, settings] = await Promise.all([
+      apiGet('/api/admin/bookings'),
+      apiGet('/api/admin/queries'),
+      apiGet('/api/admin/fleet'),
+      apiGet('/api/admin/settings')
+    ]);
+
+    const wasBookingsEmpty = state.bookings.length === 0;
+    const prevBookingIds = new Set(state.bookings.map(b=>b.id));
+    const newBookings = bookings.filter(b => !prevBookingIds.has(b.id));
+
+    const wasQueriesEmpty = state.queries.length === 0;
+    const prevQueryIds = new Set(state.queries.map(q=>q.id));
+    const newQueries = queries.filter(q => !prevQueryIds.has(q.id));
+
+    state.bookings = bookings;
+    state.queries = queries;
+    state.fleet = fleet;
+    state.settings = settings || {};
+
+    if(state.settings.bizName) document.getElementById('setBizName').value = state.settings.bizName;
+    if(state.settings.phone) document.getElementById('setPhone').value = state.settings.phone;
+    if(state.settings.email) document.getElementById('setEmail').value = state.settings.email;
+    if(state.settings.addr) document.getElementById('setAddr').value = state.settings.addr;
+
+    if(!wasBookingsEmpty && newBookings.length){ showToast(newBookings.length===1 ? 'New booking received' : newBookings.length+' new bookings received'); }
+    if(!wasQueriesEmpty && newQueries.length){ showToast(newQueries.length===1 ? 'New WhatsApp message received' : newQueries.length+' new WhatsApp messages received'); }
+
+    renderAll();
+  }catch(err){
+    console.error('Poll error:', err);
+  }
+}
+function startPolling(){
+  stopPolling();
+  pollData();
+  pollTimer = setInterval(pollData, POLL_INTERVAL_MS);
+}
+function stopPolling(){
+  if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+}
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+document.getElementById('loginForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const pass = document.getElementById('loginPass').value;
+  const btn = document.getElementById('loginBtn');
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try{
+    const res = await fetch('/api/admin-login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'include',
+      body: JSON.stringify({ password: pass })
+    });
+    if(res.ok){
+      showShell();
+    } else {
+      const data = await res.json().catch(()=>({}));
+      errEl.textContent = data.error || 'Incorrect password.';
+    }
+  }catch(err){
+    errEl.textContent = 'Sign-in failed: ' + err.message;
+  }finally{
+    btn.disabled = false; btn.textContent = 'Sign In';
+  }
+});
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  try{ await fetch('/api/admin-logout', {method:'POST', credentials:'include'}); }catch(e){}
+  showLogin();
+});
+
+function showShell(){
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('shell').classList.add('active');
+  document.getElementById('loginPass').value = '';
+  boot();
+}
+function showLogin(){
+  document.getElementById('shell').classList.remove('active');
+  document.getElementById('loginScreen').style.display = 'flex';
+  stopPolling();
+  booted = false;
+}
+
+// On page load, check whether a valid session cookie already exists
+// (so a refresh doesn't force logging in again).
+async function checkSession(){
+  try{
+    const res = await fetch('/api/admin/settings', {credentials:'include'});
+    if(res.ok){ showShell(); return; }
+  }catch(e){ /* fall through to login screen */ }
+  showLogin();
+}
+checkSession();
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+const PAGE_META = {
+  dashboard:['Dashboard','Live overview of bookings, revenue and fleet status'],
+  bookings:['Bookings','Every reservation submitted through the website or logged manually'],
+  whatsapp:['WhatsApp Queries',"Enquiries received via the site's WhatsApp button"],
+  fleet:['Fleet','Manage vehicles, pricing and availability'],
+  reports:['Revenue & Reports','Sales performance across any date range'],
+  settings:['Settings','Business details and demo data controls']
+};
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+    item.classList.add('active');
+    const page = item.dataset.page;
+    document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+    document.getElementById('page-'+page).classList.add('active');
+    document.getElementById('pageTitle').textContent = PAGE_META[page][0];
+    document.getElementById('pageSub').textContent = PAGE_META[page][1];
+    sidebar.classList.remove('mobile-open');
+    if(page==='reports') generateReport();
+  });
+});
+
+/* ============================================================
+   CLOCK
+   ============================================================ */
+function tickClock(){
+  const n = new Date();
+  document.getElementById('clockTime').textContent = n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('clockDate').textContent = n.toLocaleDateString('en-US',{weekday:'long', month:'short', day:'numeric'});
+}
+setInterval(tickClock,1000);
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+document.querySelectorAll('[data-close]').forEach(el=>{
+  el.addEventListener('click', ()=> document.getElementById(el.dataset.close).classList.remove('open'));
+});
+document.querySelectorAll('.modal-overlay').forEach(ov=>{
+  ov.addEventListener('click', e=>{ if(e.target===ov) ov.classList.remove('open'); });
+});
+
+/* ============================================================
+   REVENUE HELPERS
+   ============================================================ */
+function isCounted(b){ return b.status==='completed' || b.status==='confirmed'; }
+function revenueInRange(from, to){
+  return state.bookings.filter(b=> isCounted(b) && b.pickup>=from && b.pickup<=to)
+    .reduce((s,b)=>s+b.amount,0);
+}
+function startOfWeek(d){ const x=new Date(d); const day=x.getDay(); const diff=(day===0?-6:1-day); x.setDate(x.getDate()+diff); x.setHours(0,0,0,0); return x; }
+
+/* ============================================================
+   DASHBOARD RENDER
+   ============================================================ */
+function renderLedger(){
+  const now = new Date();
+  const today = dateStr(now);
+  const wkStart = dateStr(startOfWeek(now));
+  const monthStart = dateStr(new Date(now.getFullYear(), now.getMonth(),1));
+  const yearStart = dateStr(new Date(now.getFullYear(),0,1));
+
+  const todayRev = revenueInRange(today, today);
+  const weekRev = revenueInRange(wkStart, today);
+  const monthRev = revenueInRange(monthStart, today);
+  const yearRev = revenueInRange(yearStart, today);
+
+  const yesterday = dateStr(new Date(now.getTime()-86400000));
+  const yestRev = revenueInRange(yesterday, yesterday);
+  const delta = yestRev>0 ? Math.round(((todayRev-yestRev)/yestRev)*100) : (todayRev>0?100:0);
+
+  const pendingQ = state.queries.filter(q=>q.status==='new').length;
+  const availCars = state.fleet.filter(c=>c.available).length;
+
+  const items = [
+    ['Today', fmtMoney(todayRev), delta>=0?`▲ ${delta}% vs yesterday`:`▼ ${Math.abs(delta)}% vs yesterday`, delta>=0?'up':'down'],
+    ['This Week', fmtMoney(weekRev), '', 'flat'],
+    ['This Month', fmtMoney(monthRev), '', 'flat'],
+    ['This Year', fmtMoney(yearRev), '', 'flat'],
+  ];
+  let html = items.map(it=>`
+    <div class="ledger-item">
+      <div class="l-eyebrow">${it[0]}</div>
+      <div class="l-num">${it[1]}</div>
+      ${it[2]?`<div class="l-delta ${it[3]}">${it[2]}</div>`:''}
+    </div>`).join('');
+  html += `
+    <div class="ledger-item">
+      <div class="l-eyebrow">Fleet &amp; Queries</div>
+      <div class="l-num">${availCars}<small> / ${state.fleet.length} available</small></div>
+      <div class="l-delta ${pendingQ>0?'down':'flat'}">${pendingQ} pending WhatsApp ${pendingQ===1?'query':'queries'}</div>
+    </div>`;
+  document.getElementById('ledgerStrip').innerHTML = html;
+
+  const b1 = document.getElementById('badgeBookings');
+  const pendingBookings = state.bookings.filter(b=>b.status==='pending').length;
+  if(pendingBookings>0){ b1.style.display='inline-flex'; b1.textContent = pendingBookings; } else b1.style.display='none';
+  const b2 = document.getElementById('badgeWA');
+  if(pendingQ>0){ b2.style.display='inline-flex'; b2.textContent = pendingQ; } else b2.style.display='none';
+}
+
+function buildRevenueSeries(period){
+  const now = new Date();
+  let labels=[], data=[];
+  if(period==='daily'){
+    for(let i=29;i>=0;i--){
+      const d = new Date(now); d.setDate(d.getDate()-i);
+      const ds = dateStr(d);
+      labels.push(d.toLocaleDateString('en-US',{day:'numeric',month:'short'}));
+      data.push(revenueInRange(ds,ds));
+    }
+  } else if(period==='weekly'){
+    for(let i=11;i>=0;i--){
+      const wStart = new Date(startOfWeek(now)); wStart.setDate(wStart.getDate()-i*7);
+      const wEnd = new Date(wStart); wEnd.setDate(wEnd.getDate()+6);
+      labels.push(wStart.toLocaleDateString('en-US',{day:'numeric',month:'short'}));
+      data.push(revenueInRange(dateStr(wStart), dateStr(wEnd)));
+    }
+  } else {
+    for(let i=11;i>=0;i--){
+      const mStart = new Date(now.getFullYear(), now.getMonth()-i, 1);
+      const mEnd = new Date(now.getFullYear(), now.getMonth()-i+1, 0);
+      labels.push(mStart.toLocaleDateString('en-US',{month:'short'}));
+      data.push(revenueInRange(dateStr(mStart), dateStr(mEnd)));
+    }
+  }
+  return {labels,data};
+}
+
+function chartFonts(){ return { family:"'Inter', sans-serif" }; }
+
+function renderRevenueChart(){
+  const {labels,data} = buildRevenueSeries(currentRevPeriod);
+  const ctx = document.getElementById('revenueChart');
+  if(charts.revenue) charts.revenue.destroy();
+  const gradient = ctx.getContext('2d').createLinearGradient(0,0,0,260);
+  gradient.addColorStop(0,'rgba(184,147,91,0.35)');
+  gradient.addColorStop(1,'rgba(184,147,91,0.02)');
+  charts.revenue = new Chart(ctx,{
+    type:'line',
+    data:{labels, datasets:[{
+      label:'Revenue', data, borderColor:'#8E6E3E', backgroundColor:gradient, fill:true,
+      tension:0.35, pointRadius:0, pointHoverRadius:5, pointHoverBackgroundColor:'#B8935B', borderWidth:2.5
+    }]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(c)=> ' AED '+c.parsed.y.toLocaleString('en-US') } } },
+      scales:{
+        x:{ grid:{display:false}, ticks:{ font:chartFonts(), color:'#6E6A5C', maxRotation:0, autoSkip:true, maxTicksLimit:8 } },
+        y:{ grid:{color:'#EAE1CC'}, ticks:{ font:chartFonts(), color:'#6E6A5C', callback:(v)=> 'AED '+ (v>=1000? (v/1000)+'k':v) } }
+      }
+    }
+  });
+}
+
+function renderCategoryChart(){
+  const cats = {};
+  state.bookings.filter(isCounted).forEach(b=>{
+    const car = state.fleet.find(c=>c.id===b.carId);
+    const cat = car ? car.cat : 'Other';
+    cats[cat] = (cats[cat]||0)+1;
+  });
+  const labels = Object.keys(cats);
+  const data = labels.map(l=>cats[l]);
+  const palette = ['#B8935B','#5B7B8C','#D9A441','#9C4A3E','#8E6E3E','#D9BD8C'];
+  const ctx = document.getElementById('categoryChart');
+  if(charts.category) charts.category.destroy();
+  charts.category = new Chart(ctx,{
+    type:'doughnut',
+    data:{ labels, datasets:[{ data, backgroundColor: palette, borderColor:'#fff', borderWidth:3 }] },
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins:{ legend:{ position:'bottom', labels:{ font:chartFonts(), color:'#15180F', boxWidth:10, padding:14 } } }
+    }
+  });
+}
+
+function renderFleetChart(){
+  const rev = {};
+  state.bookings.filter(isCounted).forEach(b=>{ rev[b.car]=(rev[b.car]||0)+b.amount; });
+  const sorted = Object.entries(rev).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const ctx = document.getElementById('fleetChart');
+  if(charts.fleet) charts.fleet.destroy();
+  charts.fleet = new Chart(ctx,{
+    type:'bar',
+    data:{ labels: sorted.map(s=>s[0]), datasets:[{ data: sorted.map(s=>s[1]), backgroundColor:'#B8935B', borderRadius:3, maxBarThickness:26 }] },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(c)=> ' AED '+c.parsed.x.toLocaleString('en-US') } } },
+      scales:{
+        x:{ grid:{color:'#EAE1CC'}, ticks:{ font:chartFonts(), color:'#6E6A5C', callback:(v)=> (v/1000)+'k' } },
+        y:{ grid:{display:false}, ticks:{ font:chartFonts(), color:'#15180F', font:{size:11.5} } }
+      }
+    }
+  });
+}
+
+function renderActivity(){
+  const items = [];
+  state.bookings.slice(0,4).forEach(b=> items.push({ type:'booking', time:b.createdAt, text:`${b.customer} booked the ${b.car}`, sub:fmtMoney(b.amount) }));
+  state.queries.slice(0,4).forEach(q=> items.push({ type:'query', time:q.createdAt, text:`${q.name} sent a WhatsApp query`, sub:q.message.slice(0,54)+(q.message.length>54?'…':'') }));
+  items.sort((a,b)=> new Date(b.time)-new Date(a.time));
+  document.getElementById('activityFeed').innerHTML = items.slice(0,6).map(it=>`
+    <div style="display:flex;gap:12px;align-items:flex-start;">
+      <div style="width:30px;height:30px;border-radius:50%;background:${it.type==='booking'?'rgba(184,147,91,0.15)':'rgba(63,207,98,0.15)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;">
+        ${it.type==='booking'?'🗂':'💬'}
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;">${it.text}</div>
+        <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">${it.sub} · ${new Date(it.time).toLocaleDateString('en-US',{day:'numeric',month:'short'})}</div>
+      </div>
+    </div>`).join('') || '<p style="color:var(--text-muted);font-size:13px;">No activity yet.</p>';
+}
+
+function renderDashboard(){
+  renderLedger();
+  renderRevenueChart();
+  renderCategoryChart();
+  renderFleetChart();
+  renderActivity();
+}
+
+document.getElementById('revSeg').addEventListener('click', e=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  document.querySelectorAll('#revSeg button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentRevPeriod = btn.dataset.p;
+  renderRevenueChart();
+});
+
+/* ============================================================
+   BOOKINGS PAGE
+   ============================================================ */
+function populateCarSelects(){
+  const carSel = document.getElementById('bkCar');
+  const filterSel = document.getElementById('bookingCarFilter');
+  carSel.innerHTML = state.fleet.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  filterSel.innerHTML = '<option value="">All vehicles</option>' + state.fleet.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+}
+
+function renderBookings(){
+  const q = document.getElementById('bookingSearch').value.toLowerCase();
+  const statusF = document.getElementById('bookingStatusFilter').value;
+  const carF = document.getElementById('bookingCarFilter').value;
+  let rows = state.bookings.filter(b=>{
+    const matchQ = !q || b.customer.toLowerCase().includes(q) || b.car.toLowerCase().includes(q) || b.phone.toLowerCase().includes(q);
+    const matchS = !statusF || b.status===statusF;
+    const matchC = !carF || String(b.carId)===carF;
+    return matchQ && matchS && matchC;
+  });
+  document.getElementById('bookingsCount').textContent = rows.length + ' booking' + (rows.length===1?'':'s');
+  document.getElementById('bookingsEmpty').style.display = rows.length? 'none':'block';
+
+  document.getElementById('bookingsTbody').innerHTML = rows.map(b=>`
+    <tr>
+      <td><div class="cust-name">${b.customer}</div><div class="cust-sub">${b.phone}</div></td>
+      <td>${b.car}</td>
+      <td class="tabular">${b.pickup} → ${b.dropoff}</td>
+      <td class="tabular"><b>${fmtMoney(b.amount)}</b></td>
+      <td><span class="badge ${b.status}">${b.status}</span></td>
+      <td>
+        <div class="row-actions">
+          <div class="icon-btn" title="Edit" onclick="openBookingModal('${b.id}')">✎</div>
+          <div class="icon-btn" title="Delete" onclick="deleteBooking('${b.id}')">🗑</div>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openBookingModal(id){
+  const isEdit = !!id;
+  document.getElementById('bookingModalTitle').textContent = isEdit ? 'Edit Booking' : 'New Booking';
+  const b = isEdit ? state.bookings.find(x=>x.id===id) : null;
+  document.getElementById('bkId').value = id||'';
+  document.getElementById('bkName').value = b?b.customer:'';
+  document.getElementById('bkPhone').value = b?b.phone:'';
+  document.getElementById('bkEmail').value = b?b.email:'';
+  document.getElementById('bkCar').value = b?b.carId:state.fleet[0].id;
+  document.getElementById('bkPickup').value = b?b.pickup:dateStr(new Date());
+  document.getElementById('bkDropoff').value = b?b.dropoff:dateStr(new Date(Date.now()+86400000));
+  document.getElementById('bkLocation').value = b?b.location:'';
+  document.getElementById('bkStatus').value = b?b.status:'pending';
+  document.getElementById('bkAmount').value = b?b.amount:'';
+  document.getElementById('bkNotes').value = b?b.notes:'';
+  document.getElementById('bookingModalOverlay').classList.add('open');
+}
+document.getElementById('addBookingBtn').addEventListener('click', ()=>openBookingModal(null));
+
+function autoAmount(){
+  const carId = Number(document.getElementById('bkCar').value);
+  const car = state.fleet.find(c=>c.id===carId);
+  const p = document.getElementById('bkPickup').value, d = document.getElementById('bkDropoff').value;
+  if(car && p && d){
+    const days = daysBetween(p,d);
+    document.getElementById('bkAmount').value = car.price*days;
+  }
+}
+['bkCar','bkPickup','bkDropoff'].forEach(id=> document.getElementById(id).addEventListener('change', autoAmount));
+
+document.getElementById('bookingForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const id = document.getElementById('bkId').value;
+  const carId = Number(document.getElementById('bkCar').value);
+  const car = state.fleet.find(c=>c.id===carId);
+  const payload = {
+    customer: document.getElementById('bkName').value.trim(),
+    phone: document.getElementById('bkPhone').value.trim(),
+    email: document.getElementById('bkEmail').value.trim(),
+    car: car.name, carId: car.id,
+    pickup: document.getElementById('bkPickup').value,
+    dropoff: document.getElementById('bkDropoff').value,
+    location: document.getElementById('bkLocation').value.trim(),
+    status: document.getElementById('bkStatus').value,
+    amount: Number(document.getElementById('bkAmount').value)||0,
+    notes: document.getElementById('bkNotes').value.trim()
+  };
+  try{
+    if(id){
+      await apiPost('/api/admin/bookings', { id, ...payload });
+    } else {
+      await apiPost('/api/admin/bookings', payload);
+    }
+    document.getElementById('bookingModalOverlay').classList.remove('open');
+    showToast('Booking saved');
+    pollData();
+  }catch(err){ console.error(err); showToast('Could not save booking'); }
+});
+
+async function deleteBooking(id){
+  if(!confirm('Delete this booking? This cannot be undone.')) return;
+  try{ await apiDelete('/api/admin/bookings?id=' + encodeURIComponent(id)); showToast('Booking deleted'); pollData(); }
+  catch(err){ console.error(err); showToast('Could not delete booking'); }
+}
+
+['bookingSearch','bookingStatusFilter','bookingCarFilter'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderBookings);
+  document.getElementById(id).addEventListener('change', renderBookings);
+});
+
+/* ============================================================
+   WHATSAPP PAGE
+   ============================================================ */
+function timeAgo(iso){
+  const diff = Date.now()-new Date(iso).getTime();
+  const mins = Math.floor(diff/60000);
+  if(mins<60) return mins+'m ago';
+  const hrs = Math.floor(mins/60);
+  if(hrs<24) return hrs+'h ago';
+  return Math.floor(hrs/24)+'d ago';
+}
+
+function renderWA(){
+  const q = document.getElementById('waSearch').value.toLowerCase();
+  const statusF = document.getElementById('waStatusFilter').value;
+  let rows = state.queries.filter(x=>{
+    const matchQ = !q || x.name.toLowerCase().includes(q) || x.phone.includes(q) || x.message.toLowerCase().includes(q);
+    const matchS = !statusF || x.status===statusF;
+    return matchQ && matchS;
+  });
+  document.getElementById('waEmpty').style.display = rows.length? 'none':'block';
+  document.getElementById('waList').innerHTML = rows.map(x=>`
+    <div class="wa-row">
+      <div class="wa-ava">${x.name.charAt(0)}</div>
+      <div class="wa-body">
+        <div class="wa-top"><span class="wa-name">${x.name}</span><span class="wa-time">${timeAgo(x.createdAt)}</span></div>
+        <div class="wa-msg">${x.message}</div>
+        <div class="wa-foot">
+          <span class="badge ${x.status}">${x.status}</span>
+          <div class="wa-actions">
+            <a class="btn btn-sm btn-success" target="_blank" href="https://wa.me/${x.phone}?text=${encodeURIComponent('Hi '+x.name+', thanks for reaching out to Victoria Rental Car — ')}">Reply on WhatsApp</a>
+            ${x.status!=='replied'?`<button class="btn btn-sm btn-ghost" onclick="setQueryStatus('${x.id}','replied')">Mark Replied</button>`:''}
+            ${x.status!=='closed'?`<button class="btn btn-sm btn-ghost" onclick="setQueryStatus('${x.id}','closed')">Close</button>`:''}
+            <div class="icon-btn" title="Delete" onclick="deleteQuery('${x.id}')">🗑</div>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+async function setQueryStatus(id,status){
+  try{ await apiPost('/api/admin/queries', { id, status }); showToast('Query updated'); pollData(); }
+  catch(err){ console.error(err); showToast('Could not update query'); }
+}
+async function deleteQuery(id){
+  if(!confirm('Delete this query?')) return;
+  try{ await apiDelete('/api/admin/queries?id=' + encodeURIComponent(id)); showToast('Query deleted'); pollData(); }
+  catch(err){ console.error(err); showToast('Could not delete query'); }
+}
+document.getElementById('addQueryBtn').addEventListener('click', ()=>{
+  document.getElementById('queryModalTitle').textContent = 'Log WhatsApp Query';
+  document.getElementById('qId').value=''; document.getElementById('qName').value='';
+  document.getElementById('qPhone').value=''; document.getElementById('qMessage').value='';
+  document.getElementById('qStatus').value='new';
+  document.getElementById('queryModalOverlay').classList.add('open');
+});
+document.getElementById('queryForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const payload = {
+    name: document.getElementById('qName').value.trim(),
+    phone: document.getElementById('qPhone').value.trim().replace(/\D/g,''),
+    message: document.getElementById('qMessage').value.trim(),
+    status: document.getElementById('qStatus').value
+  };
+  try{
+    await apiPost('/api/admin/queries', payload);
+    document.getElementById('queryModalOverlay').classList.remove('open');
+    showToast('Query logged');
+    pollData();
+  }catch(err){ console.error(err); showToast('Could not save query'); }
+});
+['waSearch','waStatusFilter'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderWA);
+  document.getElementById(id).addEventListener('change', renderWA);
+});
+
+/* ============================================================
+   FLEET PAGE
+   ============================================================ */
+function renderFleetAdmin(){
+  const q = document.getElementById('fleetSearch').value.toLowerCase();
+  const availF = document.getElementById('fleetAvailFilter').value;
+  let rows = state.fleet.filter(c=>{
+    const matchQ = !q || c.name.toLowerCase().includes(q) || c.cat.toLowerCase().includes(q);
+    const matchA = !availF || (availF==='on'?c.available:!c.available);
+    return matchQ && matchA;
+  });
+  document.getElementById('fleetGridAdmin').innerHTML = rows.map(c=>{
+    const bookingsForCar = state.bookings.filter(b=>b.carId===c.id);
+    const revForCar = bookingsForCar.filter(isCounted).reduce((s,b)=>s+b.amount,0);
+    return `
+    <div class="fa-card">
+      <div class="fa-img" style="background-image:url('${c.img}')">
+        <div class="fa-avail ${c.available?'on':'off'}">${c.available?'Available':'Unavailable'}</div>
+      </div>
+      <div class="fa-body">
+        <div class="fa-cat">${c.cat}</div>
+        <div class="fa-name">${c.name}</div>
+        <div class="fa-stats">
+          <div><b class="tabular">AED ${c.price}</b>Per Day</div>
+          <div><b class="tabular">${bookingsForCar.length}</b>Bookings</div>
+          <div><b class="tabular">${fmtMoney(revForCar)}</b>Revenue</div>
+        </div>
+        <div class="fa-actions">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="toggle ${c.available?'on':''}" onclick="toggleAvail(${c.id})"></div>
+            <span style="font-size:11.5px;color:var(--text-muted);">Bookable</span>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <div class="icon-btn" title="Edit" onclick="openCarModal(${c.id})">✎</div>
+            <div class="icon-btn" title="Delete" onclick="deleteCar(${c.id})">🗑</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function toggleAvail(id){
+  const c = state.fleet.find(x=>x.id===id); if(!c) return;
+  const next = !c.available;
+  try{ await apiPost('/api/admin/fleet', { id, available: next }); showToast(next?'Vehicle marked available':'Vehicle marked unavailable'); pollData(); }
+  catch(err){ console.error(err); showToast('Could not update vehicle'); }
+}
+async function deleteCar(id){
+  if(!confirm('Remove this vehicle from the fleet?')) return;
+  try{ await apiDelete('/api/admin/fleet?id=' + id); showToast('Vehicle removed'); pollData(); }
+  catch(err){ console.error(err); showToast('Could not remove vehicle'); }
+}
+let carToggleState = true;
+function openCarModal(id){
+  const isEdit = !!id;
+  const c = isEdit ? state.fleet.find(x=>x.id===id) : null;
+  document.getElementById('carModalTitle').textContent = isEdit?'Edit Vehicle':'Add Vehicle';
+  document.getElementById('carId').value = id||'';
+  document.getElementById('carName').value = c?c.name:'';
+  document.getElementById('carCat').value = c?c.cat:'Luxury Sedan';
+  document.getElementById('carPrice').value = c?c.price:'';
+  document.getElementById('carSeats').value = c?c.seats:5;
+  document.getElementById('carTrans').value = c?c.trans:'Automatic';
+  document.getElementById('carFuel').value = c?c.fuel:'Petrol';
+  document.getElementById('carImg').value = c?c.img:'';
+  carToggleState = c ? c.available : true;
+  document.getElementById('carAvailToggle').classList.toggle('on', carToggleState);
+  document.getElementById('carModalOverlay').classList.add('open');
+}
+document.getElementById('addCarBtn').addEventListener('click', ()=>openCarModal(null));
+document.getElementById('carAvailToggle').addEventListener('click', function(){
+  carToggleState = !carToggleState; this.classList.toggle('on', carToggleState);
+});
+document.getElementById('carForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const id = document.getElementById('carId').value;
+  const payload = {
+    name: document.getElementById('carName').value.trim(),
+    cat: document.getElementById('carCat').value,
+    price: Number(document.getElementById('carPrice').value)||0,
+    seats: Number(document.getElementById('carSeats').value)||1,
+    trans: document.getElementById('carTrans').value,
+    fuel: document.getElementById('carFuel').value,
+    bags: 2,
+    img: document.getElementById('carImg').value.trim() || 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop',
+    available: carToggleState
+  };
+  try{
+    if(id){
+      await apiPost('/api/admin/fleet', { id: Number(id), ...payload });
+      // Keep existing bookings' displayed car name in sync with a rename
+      const toRename = state.bookings.filter(b=>b.carId===Number(id));
+      for(const b of toRename){
+        await apiPost('/api/admin/bookings', { id: b.id, car: payload.name });
+      }
+    } else {
+      await apiPost('/api/admin/fleet', payload);
+    }
+    document.getElementById('carModalOverlay').classList.remove('open');
+    showToast('Vehicle saved');
+    pollData();
+  }catch(err){ console.error(err); showToast('Could not save vehicle'); }
+});
+['fleetSearch','fleetAvailFilter'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderFleetAdmin);
+  document.getElementById(id).addEventListener('change', renderFleetAdmin);
+});
+
+/* ============================================================
+   REPORTS PAGE
+   ============================================================ */
+document.getElementById('reportPreset').addEventListener('change', function(){
+  const custom = this.value==='custom';
+  document.getElementById('customFromWrap').style.display = custom?'block':'none';
+  document.getElementById('customToWrap').style.display = custom?'block':'none';
+});
+document.getElementById('customFromWrap').style.display='none';
+document.getElementById('customToWrap').style.display='none';
+
+function getReportRange(){
+  const preset = document.getElementById('reportPreset').value;
+  const now = new Date();
+  let from, to = dateStr(now);
+  if(preset==='7'){ const d=new Date(now); d.setDate(d.getDate()-6); from=dateStr(d); }
+  else if(preset==='30'){ const d=new Date(now); d.setDate(d.getDate()-29); from=dateStr(d); }
+  else if(preset==='90'){ const d=new Date(now); d.setDate(d.getDate()-89); from=dateStr(d); }
+  else if(preset==='month'){ from = dateStr(new Date(now.getFullYear(),now.getMonth(),1)); }
+  else if(preset==='year'){ from = dateStr(new Date(now.getFullYear(),0,1)); }
+  else { from = document.getElementById('reportFrom').value || dateStr(now); to = document.getElementById('reportTo').value || dateStr(now); }
+  return {from, to};
+}
+
+let lastReportRows = [];
+function generateReport(){
+  const {from,to} = getReportRange();
+  const rows = state.bookings.filter(b=> b.pickup>=from && b.pickup<=to);
+  lastReportRows = rows;
+  const counted = rows.filter(isCounted);
+  const totalRev = counted.reduce((s,b)=>s+b.amount,0);
+  const avg = counted.length ? totalRev/counted.length : 0;
+
+  document.getElementById('repRevenue').textContent = fmtMoney(totalRev);
+  document.getElementById('repBookings').textContent = rows.length;
+  document.getElementById('repAvg').textContent = fmtMoney(avg);
+
+  const bookedCarIds = new Set(counted.map(b=>b.carId));
+  const util = state.fleet.length ? Math.round((bookedCarIds.size/state.fleet.length)*100) : 0;
+  document.getElementById('repUtil').textContent = util+'%';
+
+  const byCar = {};
+  counted.forEach(b=>{ if(!byCar[b.car]) byCar[b.car]={count:0,rev:0}; byCar[b.car].count++; byCar[b.car].rev+=b.amount; });
+  const carRows = Object.entries(byCar).sort((a,b)=>b[1].rev-a[1].rev);
+  document.querySelector('#repVehicleTable tbody').innerHTML = carRows.map(([name,d])=>`
+    <tr><td>${name}</td><td class="tabular">${d.count}</td><td class="tabular"><b>${fmtMoney(d.rev)}</b></td></tr>
+  `).join('') || '<tr><td colspan="3" style="color:var(--text-muted);">No bookings in range</td></tr>';
+
+  const statusCounts = {pending:0,confirmed:0,completed:0,cancelled:0};
+  rows.forEach(b=> statusCounts[b.status] = (statusCounts[b.status]||0)+1);
+  const ctx = document.getElementById('repStatusChart');
+  if(charts.repStatus) charts.repStatus.destroy();
+  charts.repStatus = new Chart(ctx,{
+    type:'doughnut',
+    data:{ labels:Object.keys(statusCounts), datasets:[{ data:Object.values(statusCounts), backgroundColor:['#D9A441','#5B7B8C','#3FCF62','#9C4A3E'], borderColor:'#fff', borderWidth:3 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{ legend:{ position:'bottom', labels:{ font:chartFonts(), boxWidth:10, padding:12 } } } }
+  });
+
+  document.querySelector('#repBookingsTbody').innerHTML = rows.slice(0,50).map(b=>`
+    <tr><td>${b.customer}</td><td>${b.car}</td><td class="tabular">${b.pickup}</td><td class="tabular">${fmtMoney(b.amount)}</td><td><span class="badge ${b.status}">${b.status}</span></td></tr>
+  `).join('') || '<tr><td colspan="5" style="color:var(--text-muted);">No bookings in range</td></tr>';
+}
+document.getElementById('generateReportBtn').addEventListener('click', generateReport);
+document.getElementById('printReportBtn').addEventListener('click', ()=> window.print());
+document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
+  const headers = ['Customer','Phone','Vehicle','Pickup','Dropoff','Location','Status','Amount (AED)'];
+  const lines = [headers.join(',')];
+  lastReportRows.forEach(b=>{
+    lines.push([b.customer,b.phone,b.car,b.pickup,b.dropoff,b.location,b.status,b.amount].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  });
+  const blob = new Blob([lines.join('\n')], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'victoria-report-'+dateStr(new Date())+'.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('CSV exported');
+});
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+document.getElementById('saveSettingsBtn').addEventListener('click', async ()=>{
+  try{
+    await apiPost('/api/admin/settings', {
+      bizName: document.getElementById('setBizName').value,
+      phone: document.getElementById('setPhone').value,
+      email: document.getElementById('setEmail').value,
+      addr: document.getElementById('setAddr').value
+    });
+    showToast('Settings saved');
+  }catch(err){ console.error(err); showToast('Could not save settings'); }
+});
+document.getElementById('resetDataBtn').addEventListener('click', async ()=>{
+  if(!confirm('This will replace all bookings, queries and fleet vehicles with fresh sample data. Continue?')) return;
+  const resetBtn = document.getElementById('resetDataBtn');
+  resetBtn.disabled = true; resetBtn.textContent = 'Resetting…';
+  try{
+    await apiPost('/api/admin/reset', {});
+    showToast('Sample data restored');
+    pollData();
+  }catch(err){ console.error(err); showToast('Reset failed — see console'); }
+  finally{ resetBtn.disabled = false; resetBtn.textContent = 'Reset to Sample Data'; }
+});
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+function renderAll(){
+  populateCarSelects();
+  renderDashboard();
+  renderBookings();
+  renderWA();
+  renderFleetAdmin();
+}
+let booted = false;
+async function boot(){
+  tickClock();
+  if(booted) return;
+  booted = true;
+  // First-time setup: if the fleet is empty, seed it so the console isn't blank.
+  try{
+    const fleet = await apiGet('/api/admin/fleet');
+    if(!fleet.length){
+      showToast('Setting up your fleet for the first time…');
+      await apiPost('/api/admin/reset', {});
+    }
+  }catch(err){ console.error(err); }
+  startPolling();
+}
+</script>
+</body>
+</html>
